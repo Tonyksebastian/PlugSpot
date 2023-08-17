@@ -121,8 +121,16 @@
             <div class="divider d-flex align-items-center my-4">
               <p class="text-center fw-bold mx-3 mb-0">Or</p>
             </div>
-            <button class="btn btn-md btn-block btn-primary" style="background-color: none" type="submit"><i
-                class="fab fa-google me-2"></i> Sign in with google</button>
+            {% load socialaccount %}
+            <a href="{% provider_login_url 'google'%}" class="btn btn-primary btn-block py-2 btn-google">
+              <i class="fa-brands fa-google" style="color: #ba2138;"></i>
+              <span class="font-weight-bold">Continue with Google</span>
+          </a>
+
+
+
+            <!-- <button class="btn btn-md btn-block btn-primary" style="background-color: none" type="submit"><i
+                class="fab fa-google me-2"></i> Sign in with google</button> -->
           </form>
         </div>
       </div>

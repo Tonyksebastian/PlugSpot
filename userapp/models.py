@@ -31,9 +31,9 @@ class UserManager(BaseUserManager):
         return self.create_user(first_name, last_name, email, phone, password, **extra_fields)
 
 class CustomUser(AbstractUser):
-    STOWNER = 'Station Owner'
-    VHOWNER = 'Vehicle Owner'
-    ADMIN = 'Admin'
+    STOWNER = 1
+    VHOWNER = 2
+    ADMIN = 3
 
     ROLE_CHOICES = (
         (STOWNER, 'stowner'),
@@ -46,7 +46,7 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(max_length=50)
     phone = models.IntegerField(null=True)
     email = models.EmailField(max_length=100, unique=True)
-    role = models.CharField(choices=ROLE_CHOICES,max_length=50, blank=True, null=True)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, blank=True, null=True)
 
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)

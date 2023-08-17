@@ -152,8 +152,8 @@
           </div>
           <div class="col-md-6">
             <div class="profile-head">
-              <h5>{{user.first_name}}{{user.last_name}}</h5>
-              {% if role.vechile_owners %}
+              <h5>{{user.first_name}} {{user.last_name}}</h5>
+              {% if role.STOWNER %}
               <h6>Vehicle Owner</h6>
               {%else%}
               <h6>Station Owner</h6>
@@ -217,7 +217,7 @@
                     <label>Name</label>
                   </div>
                   <div class="col-md-6">
-                    <p>{{user.name}}</p>
+                    <p>{{user.first_name}} {{user.last_name}}</p>
                   </div>
                 </div>
                 <div class="row">

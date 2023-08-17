@@ -1,0 +1,303 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    <script type='text/javascript'
+        src='https://www.bing.com/api/maps/mapcontrol?key=Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT'></script>
+    <style>
+        body {
+            background: #eee
+        }
+
+        .ratings i {
+            font-size: 16px;
+            color: red
+        }
+
+        .strike-text {
+            color: red;
+            text-decoration: line-through
+        }
+
+        .product-image {
+            width: 100%
+        }
+
+        .dot {
+            height: 7px;
+            width: 7px;
+            margin-left: 6px;
+            margin-right: 6px;
+            margin-top: 3px;
+            background-color: blue;
+            border-radius: 50%;
+            display: inline-block
+        }
+
+        .spec-1 {
+            color: #938787;
+            font-size: 15px
+        }
+
+        h5 {
+            font-weight: 400
+        }
+
+        .para {
+            font-size: 16px
+        }
+
+        .map {
+            width: 80vw;
+            height: 80vh;
+            margin: 10px;
+            /* background-color: #938787; */
+        }
+    </style>
+    <script>
+        var loc = {
+            cord: "9.5915891,76.521997",
+            head: "Your Location"
+        };
+
+        var map;
+        var searchManager;
+
+        function initMap() {
+            var cord = loc.cord;
+            var cordArray = cord.split(",");
+            var latitude = parseFloat(cordArray[0].trim());
+            var longitude = parseFloat(cordArray[1].trim());
+
+            map = new Microsoft.Maps.Map('#myMap', {
+                credentials: 'Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT',
+                zoom: 10,
+            });
+
+            // Create markers for the predefined locations
+            var markerLocations = [
+                { location: new Microsoft.Maps.Location(9.5915891, 76.521997), title: 'Kottayam' },
+                { location: new Microsoft.Maps.Location(9.4980588, 76.3387526), title: 'Alappuzha' },
+                { location: new Microsoft.Maps.Location(9.5512534, 76.6159242), title: 'Meenadom' },
+                { location: new Microsoft.Maps.Location(9.9773506, 76.4115431), title: 'Puthenkurishu' },
+                { location: new Microsoft.Maps.Location(9.8138607, 76.9295459), title: 'Idukki' },
+                { location: new Microsoft.Maps.Location(8.524109, 76.9362462), title: 'Trivandrum' },
+                { location: new Microsoft.Maps.Location(latitude, longitude), title: '{{loc.head}}' },
+            ];
+
+            for (var i = 0; i < markerLocations.length; i++) {
+                var marker = new Microsoft.Maps.Pushpin(markerLocations[i].location, {
+                    title: markerLocations[i].title
+                });
+                map.entities.push(marker);
+            }
+
+            // Set the center and zoom level of the map based on the markers
+            var bounds = Microsoft.Maps.LocationRect.fromLocations(markerLocations.map(function (marker) {
+                return marker.location;
+            }));
+            map.setView({ bounds: bounds });
+
+            // Initialize the search manager
+            Microsoft.Maps.loadModule('Microsoft.Maps.Search', function () {
+                searchManager = new Microsoft.Maps.Search.SearchManager(map);
+            });
+        }
+
+        function searchLocation() {
+            var query = document.getElementById("searchInput").value;
+            if (!searchManager) {
+                alert("Search functionality is not available.");
+                return;
+            }
+            searchManager.geocode({
+                where: query,
+                callback: function (results) {
+                    if (results && results.results && results.results.length > 0) {
+                        var topResult = results.results[0];
+                        map.setView({ bounds: topResult.bestView });
+                        var location = topResult.location;
+                        var marker = new Microsoft.Maps.Pushpin(location);
+                        map.entities.push(marker);
+                    } else {
+                        alert("No results found for the search query.");
+                    }
+                }
+            });
+        }
+
+        // Call the initMap function once the page is loaded
+        window.onload = initMap;
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <br />
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-10">
+                <form class="card card-sm">
+                    <div class="card-body row no-gutters align-items-center">
+                        <div class="col-auto">
+                            <i class="fas fa-search h4 text-body"></i>
+                        </div>
+                        <!--end of col-->
+                        <div class="col" id="searchInput">
+                            <input class="srh form-control form-control-md form-control-borderless" type="search"
+                                placeholder="Search here">
+                        </div>
+                        <!--end of col-->
+                        <div class="col-auto px-3">
+                            <button class="searchbtn btn-lg btn-success" type="submit">Search</button>
+                        </div>
+                        <!--end of col-->
+                    </div>
+                </form>
+            </div>
+            <!--end of col-->
+
+            <div class="container-fluid col-12 d-flex justify-content-center">
+                <div class="map" id="myMap" style="width: 100%; height: 700px;"></div>
+            </div>
+
+            <div class="container mt-5 mb-5 bg-dark p-5 rounded-3">
+                <div class="d-flex justify-content-center row">
+                    <div class="col-md-10">
+                        <div class="row p-2 bg-white border rounded">
+                            <div class="col-md-3 mt-1"><img class="img-fluid img-responsive rounded product-image"
+                                    src="https://images.pexels.com/photos/9800030/pexels-photo-9800030.jpeg?auto=compress&cs=tinysrgb&w=600"></div>
+                            <div class="col-md-6 mt-1">
+                                <h5>Station Name</h5>
+                                <div class="d-flex flex-row">
+                                    <div class="ratings mr-2"><i class="fa fa-star"></i><i class="fa fa-star"></i><i
+                                            class="fa fa-star"></i><i class="fa fa-star"></i></div><span>Location</span>
+                                </div>
+                                <div class="mt-1 mb-1 spec-1"><span>Level 1 DC</span><span
+                                        class="dot"></span><span>Level 2 DC
+                                    </span><span class="dot"></span><span>Level 3 DC<br></span><span
+                                        class="dot"></span><span>Level 4 DC<br></span></div>
+                                        <span class="badge badge-success rounded-pill p-1" style="font-size: 1rem;">Live</span>
+                                <p class="text-justify para mb-0">There are many variations of passages of
+                                    Lorem Ipsum available, but the majority have suffered alteration in some form, by
+                                    injected humour, or randomised words which don't look even slightly
+                                    believable.<br><br>
+                                </p>
+                            </div>
+                            <div class="align-items-center align-content-center col-md-3 border-left mt-1">
+                                <div class="d-flex flex-row align-items-center">
+                                    <h4 class="mr-1">13.99</h4>
+                                </div>
+                                <div class="d-flex flex-column mt-4"><button class="btn btn-primary btn-sm"
+                                        type="button">Book Now</button><button
+                                        class="btn btn-outline-danger btn-sm mt-2" type="button">favourite</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="row p-2 bg-white border rounded mt-2">
+                            <div class="col-md-3 mt-1"><img class="img-fluid img-responsive rounded product-image"
+                                    src="https://i.imgur.com/JvPeqEF.jpg"></div>
+                            <div class="col-md-6 mt-1">
+                                <h5>Quant trident shirts</h5>
+                                <div class="d-flex flex-row">
+                                    <div class="ratings mr-2"><i class="fa fa-star"></i><i class="fa fa-star"></i><i
+                                            class="fa fa-star"></i><i class="fa fa-star"></i></div><span>310</span>
+                                </div>
+                                <div class="mt-1 mb-1 spec-1"><span>100% cotton</span><span
+                                        class="dot"></span><span>Light
+                                        weight</span><span class="dot"></span><span>Best finish<br></span></div>
+                                <div class="mt-1 mb-1 spec-1"><span>Unique design</span><span
+                                        class="dot"></span><span>For
+                                        men</span><span class="dot"></span><span>Casual<br></span></div>
+                                <p class="text-justify text-truncate para mb-0">There are many variations of passages of
+                                    Lorem Ipsum available, but the majority have suffered alteration in some form, by
+                                    injected humour, or randomised words which don't look even slightly
+                                    believable.<br><br>
+                                </p>
+                            </div>
+                            <div class="align-items-center align-content-center col-md-3 border-left mt-1">
+                                <div class="d-flex flex-row align-items-center">
+                                    <h4 class="mr-1">$14.99</h4><span class="strike-text">$20.99</span>
+                                </div>
+                                <h6 class="text-success">Free shipping</h6>
+                                <div class="d-flex flex-column mt-4"><button class="btn btn-primary btn-sm"
+                                        type="button">Details</button><button
+                                        class="btn btn-outline-primary btn-sm mt-2" type="button">Add to
+                                        wishlist</button></div>
+                            </div>
+                        </div>
+                        <div class="row p-2 bg-white border rounded mt-2">
+                            <div class="col-md-3 mt-1"><img class="img-fluid img-responsive rounded product-image"
+                                    src="https://i.imgur.com/Bf4dIaN.jpg"></div>
+                            <div class="col-md-6 mt-1">
+                                <h5>Quant ruybi shirts</h5>
+                                <div class="d-flex flex-row">
+                                    <div class="ratings mr-2"><i class="fa fa-star"></i><i class="fa fa-star"></i><i
+                                            class="fa fa-star"></i><i class="fa fa-star"></i></div><span>123</span>
+                                </div>
+                                <div class="mt-1 mb-1 spec-1"><span>100% cotton</span><span
+                                        class="dot"></span><span>Light
+                                        weight</span><span class="dot"></span><span>Best finish<br></span></div>
+                                <div class="mt-1 mb-1 spec-1"><span>Unique design</span><span
+                                        class="dot"></span><span>For
+                                        men</span><span class="dot"></span><span>Casual<br></span></div>
+                                <p class="text-justify text-truncate para mb-0">There are many variations of passages of
+                                    Lorem Ipsum available, but the majority have suffered alteration in some form, by
+                                    injected humour, or randomised words which don't look even slightly
+                                    believable.<br><br>
+                                </p>
+                            </div>
+                            <div class="align-items-center align-content-center col-md-3 border-left mt-1">
+                                <div class="d-flex flex-row align-items-center">
+                                    <h4 class="mr-1">$13.99</h4><span class="strike-text">$20.99</span>
+                                </div>
+                                <h6 class="text-success">Free shipping</h6>
+                                <div class="d-flex flex-column mt-4"><button class="btn btn-primary btn-sm"
+                                        type="button">Details</button><button
+                                        class="btn btn-outline-primary btn-sm mt-2" type="button">Add to
+                                        wishlist</button></div>
+                            </div>
+                        </div> -->
+                        <!-- <div class="row p-2 bg-white border rounded mt-2">
+                            <div class="col-md-3 mt-1"><img class="img-fluid img-responsive rounded product-image"
+                                    src="https://i.imgur.com/HO8e9b8.jpg"></div>
+                            <div class="col-md-6 mt-1">
+                                <h5>Quant tinor shirts</h5>
+                                <div class="d-flex flex-row">
+                                    <div class="ratings mr-2"><i class="fa fa-star"></i><i class="fa fa-star"></i><i
+                                            class="fa fa-star"></i><i class="fa fa-star"></i></div><span>110</span>
+                                </div>
+                                <div class="mt-1 mb-1 spec-1"><span>100% cotton</span><span
+                                        class="dot"></span><span>Light
+                                        weight</span><span class="dot"></span><span>Best finish<br></span></div>
+                                <div class="mt-1 mb-1 spec-1"><span>Unique design</span><span
+                                        class="dot"></span><span>For
+                                        men</span><span class="dot"></span><span>Casual<br></span></div>
+                                <p class="text-justify text-truncate para mb-0">There are many variations of passages of
+                                    Lorem Ipsum available, but the majority have suffered alteration in some form, by
+                                    injected humour, or randomised words which don't look even slightly
+                                    believable.<br><br>
+                                </p>
+                            </div>
+                            <div class="align-items-center align-content-center col-md-3 border-left mt-1">
+                                <div class="d-flex flex-row align-items-center">
+                                    <h4 class="mr-1">$15.99</h4><span class="strike-text">$21.99</span>
+                                </div>
+                                <h6 class="text-success">Free shipping</h6>
+                                <div class="d-flex flex-column mt-4"><button class="btn btn-primary btn-sm"
+                                        type="button">Details</button><button
+                                        class="btn btn-outline-primary btn-sm mt-2" type="button">Add to
+                                        wishlist</button></div>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>

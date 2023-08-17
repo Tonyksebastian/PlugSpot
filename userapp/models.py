@@ -40,11 +40,11 @@ class CustomUser(AbstractUser):
         (VHOWNER, 'vhowner'),
         (ADMIN, 'admin'),
     )
-    
+    username=None
     USERNAME_FIELD = 'email'
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    phone = models.IntegerField()
+    phone = models.IntegerField(null=True)
     email = models.EmailField(max_length=100, unique=True)
     role = models.CharField(choices=ROLE_CHOICES,max_length=50, blank=True, null=True)
 

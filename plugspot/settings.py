@@ -27,8 +27,6 @@ SECRET_KEY = 'django-insecure-n+62)719546p6yl40ck$vxqz0^rpp1)pqw9!1rv@pp)=hsd8u#
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-ALLOWED_HOSTS = []
 SITE_ID = 2
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
@@ -79,6 +77,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = False
+
 
 ROOT_URLCONF = 'plugspot.urls'
 

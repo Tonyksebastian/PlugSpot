@@ -1,4 +1,5 @@
 from django.contrib import admin
-from .models import station
-# Register your models here.
-#admin.site.register(station)
+from .models import station,booknow
+
+admin.site.register(station)
+admin.site.register(booknow)

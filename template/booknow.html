@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <style>
+        /* Custom styles for the page */
+        body {
+            background-color: #ffffff; /* White background */
+            font-family: Arial, sans-serif;
+        }
+
+        /* Container styles */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9; /* Light gray background for the form */
+        }
+
+        /* Form styles */
+        .form-control {
+            border: 2px solid #7199d5; /* Border color */
+            border-radius: 4px;
+        }
+
+        .form-control:focus {
+            border-color: #7199d5; /* Border color on focus */
+            box-shadow: 0 0 0 0.25rem rgba(255, 111, 97, 0.25);
+        }
+
+        .form-label {
+            color: #7199d5; /* Label text color */
+        }
+
+        /* Button styles */
+        .btn-next {
+            background-color: #7199d5; /* Button background color */
+            border: none;
+            color: #ffffff; /* Button text color */
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-next:hover {
+            background-color: #7199d5; /* Button background color on hover */
+        }
+
+        /* Alert styles */
+        .alert-danger {
+            background-color: #7199d5; /* Error message background color */
+            color: #ffffff; /* Error message text color */
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="" method="POST" enctype="multipart/form-data" id="booking-form">
+        {% csrf_token %}
+        <!-- Page heading -->
+        <h1 class="text-center">Booking Form</h1>
+
+        <!-- Container for the form -->
+        <div class="container">
+            {% if error %}
+            <!-- Error message display -->
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <!-- Form inputs -->
+            <div class="form-group">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" id="date" name="date" class="form-control form-control-lg" required />
+            </div>
+            <div class="form-group">
+                <label for="time" class="form-label">Start Time</label>
+                <input type="time" id="time" name="start_time" class="form-control form-control-lg" required />
+            </div>
+            <div class="form-group">
+                <label for="time" class="form-label">End Time</label>
+                <input type="time" id="time" name="end_time" class="form-control form-control-lg" required />
+            </div>
+            <div class="form-group">
+                <label for="your_slot" class="form-label">Select Slot</label>
+                <select id="your_slot" class="form-control" name="your_slot" required>
+                    <option value="">Select Slot</option>
+                    {% for num in available_slot_numbers %}
+                    <option value="{{ num }}">{{ num }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Submit button -->
+            <div class="text-center">
+                <button type="submit" id="btn1" class="btn btn-next btn-lg">Next</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- JavaScript for form validation -->
+    <script>
+        $(document).ready(function () {
+            // Validation and button disable logic
+            $("#booking-form").submit(function (event) {
+                var date = $("#date").val();
+                var time = $("#time").val();
+                var slot = $("#your_slot").val();
+                var errorMessages = [];
+
+                if (date.trim() === "") {
+                    errorMessages.push("Date is required");
+                }
+
+                if (time.trim() === "") {
+                    errorMessages.push("Time is required");
+                }
+
+                if (slot === "") {
+                    errorMessages.push("Select a slot");
+                }
+
+                if (errorMessages.length > 0) {
+                    // Display error messages
+                    var errorMessageText = errorMessages.join("<br>");
+                    $(".alert-danger").html(errorMessageText).show();
+
+                    // Disable the submit button
+                    $("#btn1").prop("disabled", true);
+
+                    event.preventDefault(); // Prevent form submission
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

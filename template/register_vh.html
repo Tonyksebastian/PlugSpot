@@ -1,0 +1,350 @@
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $("#fn").keyup(function () {
+                validatefName("#fn");
+            });
+            $("#sn").keyup(function () {
+                validatesName("#sn");
+            });
+            $("#mail").keyup(function () {
+                validateEmail("#mail");
+            });
+
+            $("#pass").keyup(function () {
+                validatePassword("#pass");
+            });
+
+            $("#cpass").keyup(function () {
+                validateConfirmPassword("#cpass");
+            });
+
+            $("#number").keyup(function () {
+                validatePhoneNumber("#number");
+            });
+
+        });
+
+        function validatefName(fieldId) {
+            var name = $(fieldId).val();
+            var lettersWithSpaces = /^[A-Za-z\s]+$/;
+            var submitButton = $("#btn1");
+            if (name.trim() === "") {
+                $("#fnspan").html("Enter the Name").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
+            } else if (!lettersWithSpaces.test(name)) {
+                $("#fnspan").html("Name field required only alphabet characters with spaces").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
+            } else {
+                $("#fnspan").html("");
+                submitButton.prop("disabled", false);
+                return true
+            }
+        }
+
+        function validatesName(fieldId) {
+            var name = $(fieldId).val();
+            var lettersWithSpaces = /^[A-Za-z\s]+$/;
+            var submitButton = $("#btn1");
+            if (name.trim() === "") {
+                $("#snspan").html("Enter the Name").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
+            } else if (!lettersWithSpaces.test(name)) {
+                $("#snspan").html("Name field required only alphabet characters with spaces").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
+            } else {
+                $("#snspan").html("");
+                submitButton.prop("disabled", false);
+                return true
+            }
+        }
+
+        function validateEmail(fieldId) {
+            var email = $(fieldId).val();
+            var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            var submitButton = $("#btn1");
+            if (email === "") {
+                $("#emspan").html("Enter the Email Id").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
+            } else if (!filter.test(email)) {
+                $("#emspan").html("Use correct Email Id").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
+            } else {
+                $("#emspan").html("");
+                submitButton.prop("disabled", false);
+                return true
+            }
+        }
+
+        function validatePassword(fieldId) {
+            var password = $(fieldId).val();
+            var pwd_expression = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])/;
+            var submitButton = $("#btn1");
+            if (password === "") {
+                $("#pspan").html("Enter the Password").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
+            } else if (!pwd_expression.test(password)) {
+                $("#pspan").html("Use correct Password").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
+            }
+            else {
+                $("#pspan").html("");
+                submitButton.prop("disabled", false);
+                return true
+            }
+        }
+
+        function validateConfirmPassword(fieldId) {
+            var password = $("#pass").val();
+            var confirmPassword = $(fieldId).val();
+
+            if (confirmPassword === "") {
+                $("#cpspan").html("Enter the Confirm Password").css("color", "red");
+                return false
+            } else if (confirmPassword !== password) {
+                $("#cpspan").html("Password do not match").css("color", "red");
+                return false
+            } else {
+                $("#cpspan").html("");
+                return true
+            }
+        }
+
+        function validatePhoneNumber(fieldId) {
+            var numberRegex = /^\d+$/; // Regular expression to allow only digits
+            var phoneNumber = $(fieldId).val();
+            var submitButton = $("#btn1"); // Adjust the ID of your submit button element
+
+            if (phoneNumber === "") {
+                $("#numspan").html("Enter the Phone number").css("color", "red");
+                submitButton.prop("disabled", true); // Disable the submit button
+                return false;
+            } else if (!numberRegex.test(phoneNumber)) {
+                $("#numspan").html("Invalid phone Number").css("color", "red");
+                submitButton.prop("disabled", true); // Disable the submit button
+                return false;
+            } else if (phoneNumber.length !== 10 || !['7', '8', '9'].includes(phoneNumber.charAt(0))) {
+                $("#numspan").html("Use correct phone Number").css("color", "red");
+                submitButton.prop("disabled", true); // Disable the submit button
+                return false;
+            } else if (/(\d)\1{4,}/.test(phoneNumber)) {
+                $("#numspan").html("Avoid more than 5 consecutive numbers").css("color", "red");
+                disableSubmitButton();
+                return false;
+            } else {
+                $("#numspan").html("");
+                submitButton.prop("disabled", false); // Enable the submit button
+                return true;
+            }
+        }
+
+        function togglePasswordVisibility() {
+            var passwordInput = document.getElementById("pass");
+            var eyeIcon = document.getElementById("eyeIcon");
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                eyeIcon.classList.remove("fa-eye-slash");
+                eyeIcon.classList.add("fa-eye");
+            } else {
+                passwordInput.type = "password";
+                eyeIcon.classList.remove("fa-eye");
+                eyeIcon.classList.add("fa-eye-slash");
+            }
+        }
+        function togglecPasswordVisibility() {
+            var passwordInput = document.getElementById("cpass");
+            var eyeIcon = document.getElementById("eyeIcon2");
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                eyeIcon.classList.remove("fa-eye-slash");
+                eyeIcon.classList.add("fa-eye");
+            } else {
+                passwordInput.type = "password";
+                eyeIcon.classList.remove("fa-eye");
+                eyeIcon.classList.add("fa-eye-slash");
+            }
+        }
+
+        function checkall() {
+            if (validatefName() && validatesName() && validateEmail() && validatePassword() && validateConfirmPassword() && validatePhoneNumber())
+                return true;
+
+            return false;
+        }
+
+    </script>
+</head>
+
+<body>
+    <form action="" method="POST">
+        {% csrf_token %}
+
+        <!-- Email input -->
+        <div class="container px-5 p-sm-1 p-lg-2">
+            <div class="row py-sm-4 mt-lg-3 align-items-center">
+                <div class="col-md-5 pr-lg-5 mb-5 sm-2 mb-md-0">
+                    <img src="https://bootstrapious.com/i/snippets/sn-registeration/illustration.svg" alt=""
+                        class="img-fluid mb-5 d-none d-md-block">
+                </div>
+
+                <!-- Registeration Form -->
+                <div class="col-md-7 col-lg-6 ml-auto ">
+                    <!-- message -->
+                    {% if error_message %}
+                    <div class="d-flex justify-content-center pt-3">
+                        <p class="text-danger mt-2 fs-4 fw-bold">{{error_message}}</p>
+                    </div>
+                    {% endif %}
+                    <!-- message -->
+                    <div action="#">
+                        <div class="row">
+                            <!-- Name -->
+                            <div class="input-group col-lg-12">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                                        <i class="fa fa-user text-muted"></i>
+                                    </span>
+                                </div>
+                                <input id="fn" type="text" name="fname" placeholder="Enter First name"
+                                    class="form-control bg-white border-left-0 border-md">
+                            </div>
+                            <span id="fnspan"></span><br>
+
+                            <!-- sname -->
+                            <div class="input-group col-lg-12">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                                        <i class="fa fa-user text-muted"></i>
+                                    </span>
+                                </div>
+                                <input id="sn" type="text" name="sname" placeholder="Enter Last name"
+                                    class="form-control bg-white border-left-0 border-md">
+                            </div>
+                            <span id="snspan"></span><br>
+
+                            <!-- Email Address -->
+                            <div class="input-group col-lg-12">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                                        <i class="fa fa-envelope text-muted"></i>
+                                    </span>
+                                </div>
+                                <input id="mail" type="email" name="email" placeholder="Enter valid email address"
+                                    class="form-control bg-white border-left-0 border-md">
+                            </div>
+                            <span id="emspan"></span><br>
+
+                            <!-- Phone Number -->
+                            <div class="input-group col-lg-12 ">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                                        <i class="fa fa-phone-square text-muted"></i>
+                                    </span>
+                                </div>
+                                <input id="number" type="tel" name="phone" placeholder="Enter phone number"
+                                    class="form-control bg-white border-md border-left-0 pl-3 pr-5">
+                            </div>
+                            <span id="numspan"></span><br>
+
+                            <!-- Password -->
+                            <div class="input-group col-lg-12 ">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                                        <i class="fa fa-lock text-muted"></i>
+                                    </span>
+                                </div>
+                                <input id="pass" type="password" name="password" placeholder="Enter Password"
+                                    class="form-control bg-white border-left-0 border-md pr-5">
+                                <span class="input-group-text bg-white px-4 border-md br-1">
+                                    <i id="eyeIcon" class="fa fa-eye-slash " onclick="togglePasswordVisibility()"></i>
+                                </span>
+
+                            </div>
+                            <span id="pspan"></span><br>
+
+                            <!-- Password Confirmation -->
+                            <div class="input-group col-lg-12 ">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                                        <i class="fa fa-lock text-muted"></i>
+                                    </span>
+                                </div>
+                                <input id="cpass" type="password" name="confirmpassword"
+                                    placeholder="Enter Confirm Password"
+                                    class="form-control bg-white border-left-0 border-md pr-5">
+                                <span class="input-group-text bg-white px-4 border-md br-1">
+                                    <i id="eyeIcon2" class="fa fa-eye-slash " onclick="togglecPasswordVisibility()"></i>
+                                </span>
+
+                            </div>
+                            <span id="cpspan"></span><br>
+
+                            <!-- Submit Button -->
+                            <div class="form-group col-lg-12">
+                                <button type="submit" id="btn1" class="btn btn-danger btn-block py-2"
+                                    onsubmit="return checkall()">
+                                    <span class="font-weight-bold">Create your account</span>
+                                </button>
+                            </div>
+
+                            <!-- Divider Text -->
+                            <div class="form-group col-lg-12 mx-auto d-flex align-items-center my-4">
+                                <div class="border-bottom w-100 ml-5"></div>
+                                <span class="px-2 small text-muted font-weight-bold text-muted">OR</span>
+                                <div class="border-bottom w-100 mr-5"></div>
+                            </div>
+
+                            <!-- Social Login -->
+                            {% load socialaccount %}
+                            <div class="form-group col-lg-12 ">
+                                <a href="{% provider_login_url 'google' %}"
+                                    class="btn btn-primary btn-block py-2 btn-google">
+                                    <i class="fa-brands fa-google" style="color: #ba2138;"></i>
+                                    <span class="font-weight-bold">Continue with Google</span>
+                                </a>
+
+                            </div>
+
+                            <div class="text-center w-100">
+                                <br>
+                                <p class="text-muted text-start font-weight-bold">Already Registered? <a
+                                        href="http://127.0.0.1:8000/login/" class="text-primary ml-2">User Login</a></p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </form>
+
+</body>
+
+</html>

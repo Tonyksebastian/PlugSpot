@@ -46,106 +46,123 @@
         function validatefName(fieldId) {
             var name = $(fieldId).val();
             var lettersWithSpaces = /^[A-Za-z\s]+$/;
+            var submitButton = $("#btn1");
             if (name.trim() === "") {
                 $("#fnspan").html("Enter the Name").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
             } else if (!lettersWithSpaces.test(name)) {
                 $("#fnspan").html("Name field required only alphabet characters with spaces").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
             } else {
                 $("#fnspan").html("");
+                submitButton.prop("disabled", false);
+                return true
             }
         }
 
         function validatesName(fieldId) {
             var name = $(fieldId).val();
             var lettersWithSpaces = /^[A-Za-z\s]+$/;
+            var submitButton = $("#btn1");
             if (name.trim() === "") {
                 $("#snspan").html("Enter the Name").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
             } else if (!lettersWithSpaces.test(name)) {
                 $("#snspan").html("Name field required only alphabet characters with spaces").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
             } else {
                 $("#snspan").html("");
+                submitButton.prop("disabled", false);
+                return true
             }
         }
 
         function validateEmail(fieldId) {
             var email = $(fieldId).val();
             var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            var submitButton = $("#btn1");
             if (email === "") {
                 $("#emspan").html("Enter the Email Id").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
             } else if (!filter.test(email)) {
                 $("#emspan").html("Use correct Email Id").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
             } else {
                 $("#emspan").html("");
+                submitButton.prop("disabled", false);
+                return true
             }
         }
 
         function validatePassword(fieldId) {
             var password = $(fieldId).val();
             var pwd_expression = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])/;
+            var submitButton = $("#btn1");
             if (password === "") {
                 $("#pspan").html("Enter the Password").css("color", "red");
-            }else if(!pwd_expression.test(password))
-                    {
-                        $("#pspan").html("Use correct Password").css("color", "red");
-
-                   }
-            else 
-            {
+                submitButton.prop("disabled", true);
+                return false
+            } else if (!pwd_expression.test(password)) {
+                $("#pspan").html("Use correct Password").css("color", "red");
+                submitButton.prop("disabled", true);
+                return false
+            }
+            else {
                 $("#pspan").html("");
+                submitButton.prop("disabled", false);
+                return true
             }
         }
 
         function validateConfirmPassword(fieldId) {
             var password = $("#pass").val();
             var confirmPassword = $(fieldId).val();
+
             if (confirmPassword === "") {
                 $("#cpspan").html("Enter the Confirm Password").css("color", "red");
+                return false
             } else if (confirmPassword !== password) {
                 $("#cpspan").html("Password do not match").css("color", "red");
+                return false
             } else {
                 $("#cpspan").html("");
+                return true
             }
         }
 
         function validatePhoneNumber(fieldId) {
-            var numberRegex = /^[-+]?\d*\.?\d+$/;
+            var numberRegex = /^\d+$/; // Regular expression to allow only digits
             var phoneNumber = $(fieldId).val();
+            var submitButton = $("#btn1"); // Adjust the ID of your submit button element
 
             if (phoneNumber === "") {
                 $("#numspan").html("Enter the Phone number").css("color", "red");
+                submitButton.prop("disabled", true); // Disable the submit button
+                return false;
             } else if (!numberRegex.test(phoneNumber)) {
                 $("#numspan").html("Invalid phone Number").css("color", "red");
-            } else if (phoneNumber.length > 10) {
+                submitButton.prop("disabled", true); // Disable the submit button
+                return false;
+            } else if (phoneNumber.length !== 10 || !['7', '8', '9'].includes(phoneNumber.charAt(0))) {
                 $("#numspan").html("Use correct phone Number").css("color", "red");
+                submitButton.prop("disabled", true); // Disable the submit button
+                return false;
+            } else if (/(\d)\1{4,}/.test(phoneNumber)) {
+                $("#numspan").html("Avoid more than 5 consecutive numbers").css("color", "red");
+                disableSubmitButton();
+                return false;
             } else {
                 $("#numspan").html("");
+                submitButton.prop("disabled", false); // Enable the submit button
+                return true;
             }
         }
-
-
-
-    //   function validatePhoneNumber() {
-    //   const phoneNumberValue = phoneNumberInput.value;
-    //   const phoneNumberError = document.getElementById('phoneNumberError');
-      
-    //   // Check if all 10 digits are the same
-    //   if (/^(\d)\1{9}$/.test(phoneNumberValue)) {
-    //     phoneNumberError.textContent = 'Phone number cannot have all digits the same.';
-    //     return false;
-    //   }
-      
-    //   // Check if the first digit is 7, 8, or 9, and the remaining are digits 0-9
-    //   if (!/^[789]\d{9}$/.test(phoneNumberValue)) {
-    //     phoneNumberError.textContent = 'Enter a valid Indian phone number (10 digits starting with 7, 8, or 9).';
-    //     return false;
-    //   } else {
-    //     phoneNumberError.textContent = '';
-    //     return true;
-    //   }
-    // }
-
-
-
 
         function togglePasswordVisibility() {
             var passwordInput = document.getElementById("pass");
@@ -176,14 +193,21 @@
             }
         }
 
+        function checkall() {
+            if (validatefName() && validatesName() && validateEmail() && validatePassword() && validateConfirmPassword() && validatePhoneNumber())
+                return true;
+
+            return false;
+        }
+
     </script>
 </head>
 
 <body>
     <form action="" method="POST">
         {% csrf_token %}
-         
-         <!-- Email input -->
+
+        <!-- Email input -->
         <div class="container px-5 p-sm-1 p-lg-2">
             <div class="row py-sm-4 mt-lg-3 align-items-center">
                 <div class="col-md-5 pr-lg-5 mb-5 sm-2 mb-md-0">
@@ -195,12 +219,14 @@
                 <div class="col-md-7 col-lg-6 ml-auto ">
                     <!-- message -->
                     {% if error_message %}
-                    <div class="d-flex justify-content-center pt-3"><p class="text-danger mt-2 fs-4 fw-bold">{{error_message}}</p></div>
+                    <div class="d-flex justify-content-center pt-3">
+                        <p class="text-danger mt-2 fs-4 fw-bold">{{error_message}}</p>
+                    </div>
                     {% endif %}
                     <!-- message -->
                     <div action="#">
                         <div class="row">
-                              <!-- Name -->
+                            <!-- Name -->
                             <div class="input-group col-lg-12">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-white px-4 border-md border-right-0">
@@ -212,8 +238,8 @@
                             </div>
                             <span id="fnspan"></span><br>
 
-                               <!-- sname -->
-                               <div class="input-group col-lg-12">
+                            <!-- sname -->
+                            <div class="input-group col-lg-12">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-white px-4 border-md border-right-0">
                                         <i class="fa fa-user text-muted"></i>
@@ -271,7 +297,8 @@
                                         <i class="fa fa-lock text-muted"></i>
                                     </span>
                                 </div>
-                                <input id="cpass" type="password" name="confirmpassword" placeholder="Enter Confirm Password"
+                                <input id="cpass" type="password" name="confirmpassword"
+                                    placeholder="Enter Confirm Password"
                                     class="form-control bg-white border-left-0 border-md pr-5">
                                 <span class="input-group-text bg-white px-4 border-md br-1">
                                     <i id="eyeIcon2" class="fa fa-eye-slash " onclick="togglecPasswordVisibility()"></i>
@@ -279,10 +306,11 @@
 
                             </div>
                             <span id="cpspan"></span><br>
-                            
+
                             <!-- Submit Button -->
                             <div class="form-group col-lg-12">
-                                <button type="submit" id="btn1" class="btn btn-danger btn-block py-2">
+                                <button type="submit" id="btn1" class="btn btn-danger btn-block py-2"
+                                    onsubmit="return checkall()">
                                     <span class="font-weight-bold">Create your account</span>
                                 </button>
                             </div>
@@ -295,19 +323,20 @@
                             </div>
 
                             <!-- Social Login -->
-                            {% load socialaccount %}
+                            <!-- {% load socialaccount %}
                             <div class="form-group col-lg-12 ">
-                                <a href="{% provider_login_url 'google'%}" class="btn btn-primary btn-block py-2 btn-google">
+                                <a href="{% provider_login_url 'google' %}"
+                                    class="btn btn-primary btn-block py-2 btn-google">
                                     <i class="fa-brands fa-google" style="color: #ba2138;"></i>
                                     <span class="font-weight-bold">Continue with Google</span>
                                 </a>
-                        
-                            </div>
+
+                            </div> -->
 
                             <div class="text-center w-100">
                                 <br>
-                                <p class="text-muted text-start font-weight-bold">Already Registered? <a href="http://127.0.0.1:8000/login/"
-                                        class="text-primary ml-2">Login</a></p>
+                                <p class="text-muted text-start font-weight-bold">Already Registered? <a
+                                        href="http://127.0.0.1:8000/login/" class="text-primary ml-2">User Login</a></p>
                             </div>
 
                         </div>

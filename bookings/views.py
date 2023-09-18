@@ -186,6 +186,7 @@ def addstation(request):
         # Retrieve the selected value from the max_slot select element
         maxslot = request.POST.get('max_slot')
         print(maxslot)
+        available = maxslot
         description = request.POST.get('desc')
         price = request.POST.get('price')
 
@@ -198,6 +199,7 @@ def addstation(request):
             contact=contact,
             longitude=longitude,
             maxslot=maxslot,
+            available = available,
             description=description,
             price=price,
             user_id=userid
@@ -237,14 +239,19 @@ def station_dash(request):
 def update(request, stid2):
     stid = station.objects.get(id=stid2)
     stid1 = station.objects.filter(id=stid2)
+    
     stnumber = range(1, 16)
+    message =''
     if request.method == 'POST':
         stid.stname = request.POST.get('stname')
         stid.ownername = request.POST.get('ownername')
         stid.place = request.POST.get('loc')
         stid.latitude = request.POST.get('lat')
-        stid.longitude = request.POST.get('long')
-        stid.maxslot = request.POST.get('max_slot',4)
+        stid.longitude = request.POST.get('long') 
+        new_max_slot = int(request.POST.get('max_slot'))
+        if new_max_slot >= stid.available:
+            stid.maxslot = new_max_slot
+            # message = "invalid update"
         stid.description = request.POST.get('desc')
         stid.price = request.POST.get('price')
 
@@ -254,7 +261,7 @@ def update(request, stid2):
         stid.save()
         return redirect("mystation")
 
-    return render(request, 'updatestation.html', {'station': stid1, 'stnumber': stnumber})
+    return render(request, 'updatestation.html', {'station': stid1, 'stnumber': stnumber,'message':message})
 
 
 # def delete(request, stid2):
@@ -293,7 +300,19 @@ def delete_booking(request, stid2):
     return render(request, 'mybooking.html', {'item_to_delete': item_to_delete})
 
 
-def delete_adm_user(request,stid2):
-    item_to_delete = CustomUser.objects.get(id=stid2)
-    item_to_delete.delete()
-    return render(request,'user_dash.html')
+def delete_adm_user(request, stid2):
+    queryset = CustomUser.objects.get(id=stid2)
+    if request.method == 'POST':
+        queryset.delete()
+        queryset.save()
+        return redirect('user_dash')
+    return render(request, 'user_dash.html')
+
+
+def delete_adm_station(request, stid2):
+    queryset = station.objects.get(id=stid2)
+    if request.method == 'POST':
+        queryset.delete()
+        queryset.save()
+        return redirect('station_dash')
+    return render(request, 'station_dash.html')

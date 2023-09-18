@@ -44,6 +44,9 @@
                     <div class="col-lg-6">
                       <div class="p-5">
                         <h3 class="fw-normal mb-3 text-primary">General Information</h3>
+                        {% for i in message %}
+                        <h4>{{ message }}</h4>
+                        {% endfor %}
                         <div class="form-group">
                           <label for="stname">Station name</label>
                           <input type="text" id="stname" name="stname" value="{{i.stname}}" class="form-control"

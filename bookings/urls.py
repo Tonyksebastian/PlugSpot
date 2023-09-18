@@ -17,5 +17,5 @@ urlpatterns = [
     path('delete_items/<int:stid2>/', views.delete_items, name="delete_items"),
     path('delete_booking/<int:stid2>/', views.delete_booking, name="delete_booking"),
     path('delete_adm_user/<int:stid2>/', views.delete_adm_user, name="delete_adm_user"),
-
+    path('delete_adm_station/<int:stid2>/', views.delete_adm_station, name="delete_adm_station"),
 ]

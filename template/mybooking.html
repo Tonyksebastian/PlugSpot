@@ -10,37 +10,134 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 </head>
 
+<script type="text/javascript" src="https://www.bing.com/api/maps/mapcontrol?key=Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT"></script>
+
+<script>
+  var map;
+  var searchManager;
+  var directionsManager;
+
+  function initMap() {
+      map = new Microsoft.Maps.Map("#myMap", {
+          credentials: "Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT",
+          zoom: 10,
+      });
+
+      // Initialize the directions manager
+      directionsManager = new Microsoft.Maps.Directions.DirectionsManager(map);
+
+      // Retrieve data from Django view and loop through it
+      var locations = [
+          {% for record in stdata %}
+          {
+              latitude: {{ record.latitude }},
+              longitude: {{ record.longitude }},
+              stname: "{{ record.stname }}",
+              place: "{{ record.place }}"
+          },
+          {% endfor %}
+      ];
+
+      // Create markers for each location
+      for (var i = 0; i < locations.length; i++) {
+          var location = locations[i];
+          var marker = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(location.latitude, location.longitude), {
+              title: location.stname,
+              subTitle: location.place
+          });
+
+          // Attach a click event handler to each marker
+          Microsoft.Maps.Events.addHandler(marker, 'click', function (e) {
+              // Calculate directions to the clicked location
+              calculateDirections(e.target.getLocation());
+          });
+
+          map.entities.push(marker);
+      }
+  }
+
+  // Function to calculate directions to a location
+  function calculateDirections(destinationLocation) {
+      var startPoint = new Microsoft.Maps.Directions.Waypoint({ location: map.getCenter() });
+      var endPoint = new Microsoft.Maps.Directions.Waypoint({ location: destinationLocation });
+
+      directionsManager.clearAll();
+      directionsManager.addWaypoint(startPoint);
+      directionsManager.addWaypoint(endPoint);
+
+      directionsManager.calculateDirections();
+  }
+
+  // Handle the "Get Directions" button click
+  document.getElementById('getDirectionsBtn').addEventListener('click', function () {
+      // Replace this with the destination location you want to provide directions to
+      var destinationLocation = new Microsoft.Maps.Location(9.5915891, 76.521997);
+      calculateDirections(destinationLocation);
+  });
+
+  // Call the initMap function once the page is loaded
+  window.onload = initMap;
+</script>
+
+<style>
+  /* Add this CSS to your existing styles */
+  /* Add this CSS to your existing styles */
+  .navbar .btn {
+    color: aliceblue;
+    text-decoration: none;
+    position: relative;
+    background-color: transparent;
+  }
+
+  .navbar .btn:before {
+    content: "";
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .navbar .btn:hover {
+    color: #8cc63f;
+    /* Green color for text on hover */
+  }
+
+  .navbar .btn:hover:before {
+    background-color: #8cc63f;
+    /* Green color for underline on hover */
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  .btn-pro {
+    text-decoration: none;
+    color: aliceblue;
+    background-color: #8cc63f;
+    padding: 5px;
+    width: 70px;
+    text-align: center;
+    border-radius: 5px;
+  }
+
+  .btn-pro:hover {
+    background-color: aliceblue;
+    color: black;
+  }
+
+</style>
+
 <body>
-  {% comment %}
-  <!-- Button trigger modal -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+    <a href="{% url 'index' %}" class="btn m-1">Home</a>
+    <a href="{% url 'booking' %}" class="btn m-1">Available Stations</a>
+    <a href="{% url 'check_bookings' %}" class="btn m-1">Ended Bookings</a>
+    <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
 
-  <!-- Modal -->
-
-  <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Are you sure?</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Do you really want to delete this record? This process cannot be undone.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <form method="post" action="{% url 'delete' i.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger" name="confirmation">Delete</button>
-                    </form>
-                    
-                </div>
-            </div>
-        </div>
-    </div> -->
-  {% endcomment %}
-  <div class="col-md-6 text-md-center w-100">
-    <a href="{% url 'index' %}" class="btn btn-primary m-2">Home</a>
-  </div>
+  </nav>
 
   <div class="head w-100 text-center text-primary fs-4 p-4">
     <b>My Bookings</b>
@@ -92,23 +189,21 @@
       <div class="col-12 col-md-3">
         <div class="d-flex align-items-center">
           <span class="h5 mb-0 text-gray text-through me-2">
-            {{ i.price}}/hr</span>
+            {{ i.price}}/Unit</span>
         </div>
         <!-- info-price-detail // -->
         <div class="d-grid gap-2 mt-4">
-          <!-- <a class="btn btn-tertiary btn-sm btn-primary" href="{% url 'bookstation' i.id %}">
-            Book Now
-          </a> -->
           {% comment %} <a class="btn btn-tertiary btn-sm btn-success" href="{% url 'update_booking' i.id %}">
             <i class="bi bi-trash"></i> Update
           </a> {% endcomment %}
-          <a class="btn btn-tertiary btn-sm btn-primary" href="#">
-            <i class="bi bi-trash"></i> Direction
-          </a>
           <form class="w-100" method="post" action="{% url 'delete_booking' i.id %}" id="delete-form">
             {% csrf_token %}
-            <button type="button" class="btn btn-tertiary btn-sm btn-danger w-100" onclick="confirmDelete()"><i class="bi bi-trash"></i> Delete</button>
+            <button type="button" class="btn btn-tertiary btn-sm btn-danger w-100" onclick="confirmDelete()"><i
+                class="bi bi-trash"></i> Delete</button>
           </form>
+          <a class="btn btn-tertiary btn-sm btn-primary" href="{% url 'print_as_pdf' stid2=i.id %}">
+            <i class="bi bi-trash"></i> Print Invoice
+          </a>
         </div>
       </div>
     </div>

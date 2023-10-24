@@ -33,6 +33,24 @@
 
   <!-- theme core css -->
   <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+  <style>
+    /* Style for the button when it's not hovered */
+/* Style for the button when it's not hovered */
+.transparent-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: white; /* Set the text color to white */
+  transition: color 0.3s; /* Add a smooth transition for the text color */
+}
+
+/* Style for the button on hover with yellowgreen text color */
+.transparent-button:hover {
+  color: yellowgreen; /* Change the text color to yellowgreen on hover */
+}
+
+
+  </style>
 </head>
 <script src="{% static 'jquery.min.js' %}"></script>
 <script src="{% static 'owlcarousel/owl.carousel.min.js' %}"></script>
@@ -67,11 +85,11 @@
                   <!-- start menu area -->
                   <ul class="navbar-nav ms-auto" id="nav" style="display: none">
                     <li><a href="{% url 'index' %}">Home</a></li>
-                    <li>
-                      <a href="index.html#!">Pages</a>
+                    {% comment %} <li>
+                      <a href="#">Pages</a>
                       <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        {% comment %} <li><a href="our-history.html">Our History</a></li>
+                        <li><a href="{% static 'about.html' %}">About Us</a></li>
+                        <li><a href="our-history.html">Our History</a></li>
                         <li><a href="faq.html">FAQ's</a></li>
                         <li>
                           <a href="index.html#!">Our Team</a>
@@ -81,11 +99,11 @@
                               <a href="team-details.html">Team Details</a>
                             </li>
                           </ul>
-                        </li> {% endcomment %}
+                        </li> 
                         <li><a href="pricing.html">Pricing Plans</a></li>
-                        {% comment %} <li><a href="testimonials.html">Testimonials</a></li>
+                        <li><a href="testimonials.html">Testimonials</a></li>
                         <li><a href="404-page.html">404 Page</a></li>
-                        <li><a href="coming-soon.html">Coming Soon</a></li> {% endcomment %}
+                        <li><a href="coming-soon.html">Coming Soon</a></li>
                         <li>
                           <a href="privacy-policy.html">Privacy Policy</a>
                         </li>
@@ -93,20 +111,22 @@
                           <a href="terms-conditions.html">Terms & Conditions</a>
                         </li>
                       </ul>
-                    </li>
+                    </li> {% endcomment %}
                     <li>
-                      <a href="index.html#!">Service</a>
+                      <a href="#" id="service">Service</a>
                       <ul>
-                        <li><a href="services.html">Our Services</a></li>
+                        <li><a href="{% url 'seminar:predict_traffic' %}">Predict</a>
+                          </li>
+                        {% comment %} <li><a href="services.html">Our Services</a></li> {% endcomment %}
                         <li>
-                          <a href="{% url 'booking' %}">Public Stations</a>
-                        </li>     
-                        {% if user.role == 'stowner' %}
+                          <a id="public_station" href="{% url 'booking' %}">Public Stations</a>
+                        </li>  
+                        {% if user.role == 'stowner' or 'admin' %}
                         <li>
                           <a href="{% url 'addstation' %}">Add Stations</a>
                         </li>
                         {% endif %}
-                        <li>
+                        {% comment %} <li>
                           <a href="solar-clean-energy.html">Solar & Clean Energy</a>
                         </li>
                         <li>
@@ -126,7 +146,7 @@
                         </li>
                         <li>
                           <a href="hybrid-car-watches.html">Hybrid Car Watches</a>
-                        </li>
+                        </li> {% endcomment %}
                       </ul>
                     </li>
                     {% if user.is_authenticated %}
@@ -137,14 +157,14 @@
                     </li>
                     {% endif %}
                     {% endif %}
-                    <li>
+                    {% comment %} <li>
                       <a href="index.html#!">Blog</a>
                       <ul>
                         <li><a href="blog-grid.html">Blog Grid</a></li>
                         <li><a href="blog-list.html">Blog List</a></li>
                         <li><a href="blog-details.html">Blog Details</a></li>
                       </ul>
-                    </li>
+                    </li> {% endcomment %}
                     <!-- <li>
                                             <a href="index.html#!">Elements</a>
                                             <ul class="row megamenu">
@@ -302,17 +322,22 @@
                                                 </li>
                                             </ul>
                                         </li> -->
-                    <li><a href="contact.html">Contact</a></li>
-                    {% if user.is_authenticated %}
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                    {% comment %} <li><a href="{% url 'contact' %}">Contact</a></li> {% endcomment %}
+                                            
                     {% if user.role == 'stowner' %}
+                    <li><a href="{% url 'subscription' %}">Subscription</a></li>
                     <li><a href="{% url 'mystation' %}">My stations</a></li>
+                    <li><a href="{% url 'allbooking' %}">All Bookings</a></li>
                     {% endif %}
                     {% if user.role == 'vhowner' %}
                     <li><a href="{% url 'mybookings' %}">My Bookings</a></li>
-                    {% endif %}
+                    <!-- <li><a href="{% url 'predict' %}">predict</a></li> -->
+                    {% endif %} 
+                    {% if user.is_authenticated %}
+                    <li><a id="logout" href="{% url 'logout' %}">Logout</a></li>
+
                     {% if user.is_superuser %}
-                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li><a id="dashboard" href="{% url 'dashboard' %}">Dashboard</a></li>
                     {%endif%}
                   </ul>
                   <!-- end menu area -->

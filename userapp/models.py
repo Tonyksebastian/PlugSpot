@@ -62,7 +62,7 @@ class CustomUser(AbstractUser):
     objects = UserManager()
 
     def __str__(self):  # Use double underscores here
-        return self.first_name
+        return self.email
 
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
@@ -81,7 +81,7 @@ class UserProfile(models.Model):
     
     def __str__(self):
         if self.user:
-            return self.user.first_name
+            return self.user.email
         else:
             return "UserProfile with no associated user"
         

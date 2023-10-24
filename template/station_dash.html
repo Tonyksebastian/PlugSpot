@@ -209,6 +209,97 @@
             margin-top: 10px;
             font-size: 13px;
         }
+
+        .count-box {
+            text-align: center;
+            padding: 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border-radius: 5px;
+        }
+
+        .count-number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .count-label {
+            font-size: 16px;
+        }
+
+        .navbar .btn {
+            color: aliceblue;
+            text-decoration: none;
+            position: relative;
+            background-color: transparent;
+        }
+
+        .navbar .btn:before {
+            content: "";
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: white;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .navbar .btn:hover {
+            color: #8cc63f;
+            /* Green color for text on hover */
+        }
+
+        .navbar .btn:hover:before {
+            background-color: #8cc63f;
+            /* Green color for underline on hover */
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .btn-pro {
+            text-decoration: none;
+            color: aliceblue;
+            background-color: #8cc63f;
+            padding: 5px;
+            width: 70px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .btn-pro:hover {
+            background-color: aliceblue;
+            color: black;
+        }
+
+        #date-range-form-overlay {
+            display: flex;
+            justify-content: center;
+            /* Horizontally center content */
+            align-items: flex-start;
+            /* Align content to the top */
+            position: fixed;
+            top: 5%;
+            /* 5% margin from the top */
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Add a semi-transparent background overlay */
+        }
+
+        #date-range-form {
+            background-color: #fff;
+            /* Set the background color of the form */
+            padding: 20px;
+            /* Add some padding to the form */
+            border-radius: 5px;
+            /* Add rounded corners to the form */
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            /* Add a shadow to the form */
+        }
     </style>
     <script>
         $(document).ready(function () {
@@ -218,6 +309,76 @@
 </head>
 
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+        <a href="{% url 'index' %}" class="btn m-1">Home</a>
+        <div class="dropdown">
+            <button class="btn m-1 dropdown-toggle" type="button" id="printDropdown" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Print details
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="printDropdown">
+                <li><button id="open-button1" class="dropdown-item">Print User Details</button></li>
+                <li><button id="open-button2" class="dropdown-item">Print Bookings</button></li>
+                <li><button id="open-button3" class="dropdown-item">Print Stations</button></li>
+            </ul>
+        </div>
+        <a href="{% url 'add_subscription' %}" class="btn m-1">Add subscription</a>
+        <a id="logout" class="btn m-1" href="{% url 'logout' %}">Logout</a>
+        <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
+    </nav>
+    <div class="container-fluid mt-5 w-50">
+        <div class="row justify-content-between">
+            <div class="col-sm-4">
+                <div class="count-box">
+                    <div class="count-number">{{ total_user }}</div>
+                    <div class="count-label">Total Users</div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="count-box">
+                    <div class="count-number">{{ user_book }}</div>
+                    <div class="count-label">Total Booking</div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="count-box">
+                    <div class="count-number">{{ total_complete }}</div>
+                    <div class="count-label">Completed Booking</div>
+                </div>
+            </div>
+            <div class="col-sm-4 mt-1">
+                <div class="count-box">
+                    <div class="count-number">{{ station_count }}</div>
+                    <div class="count-label">Total Stations</div>
+                </div>
+            </div>
+            <div class="col-sm-4 mt-1 w-100 justify-content-center">
+                <div class="count-box">
+                    <div class="count-number">{{ payment_count }}</div>
+                    <div class="count-label">Total Payments</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="date-range-form-overlay">
+            <div id="date-range-form">
+                <form method="post" action="" id="date-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="start_date">Start Date:</label>
+                        <input type="date" name="start_date" id="start_date" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date">End Date:</label>
+                        <input type="date" name="end_date" id="end_date" required class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Generate</button>
+                    <button type="button" id="cancel" class="btn btn-secondary">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
     <div class="container-fluid mt-5">
         <div class="row justify-content-center">
             <div class="col-sm-12 col-md-6">
@@ -226,7 +387,7 @@
                         <input type="text" class="form-control" placeholder="Search by Name" id="searchInput">
                         <span class="input-group-btn">
                             <button class="btn btn-info" type="button" id="searchButton">
-                                <i class="glyphicon glyphicon-search"></i>Search 
+                                <i class="glyphicon glyphicon-search"></i>Search
                             </button>
                         </span>
                     </div>
@@ -234,21 +395,24 @@
             </div>
         </div>
     </div>
-    
+
     <div class="container-xl">
         <div class="table-responsive">
             <div class="table-wrapper">
                 <div class="table-title">
                     <div class="row">
                         <div class="col-sm-5">
-                            <h2><b>Management</b> Station Panel</h2>
+                            <h2><b>Management</b> Booking Panel</h2>
                         </div>
                         <div class="col-sm-7">
-                            <a href="{% url 'index' %}" class="btn btn-secondary"><i class="material-icons">&#xe88a;</i>
-                                <span>Home</span></a>
+
                             <a href="#" class="btn btn-secondary" id="exportCSV"><i class="material-icons">&#xE24D;</i>
                                 <span>Export to Excel</span></a>
-                            <a href="#" class="btn btn-secondary"><i class="material-icons">&#xe88a;</i>
+                            <a href="{% url 'booking_dash' %}" class="btn btn-secondary"><i
+                                    class="material-icons">&#xe88a;</i>
+                                <span>Booking Data</span></a>
+                            <a href="{% url 'station_dash' %}" class="btn btn-secondary"><i
+                                    class="material-icons">&#xe88a;</i>
                                 <span>Station Data</span></a>
                             <a href="{% url 'dashboard' %}" class="btn btn-secondary"><i
                                     class="material-icons">&#xe88a;</i>
@@ -271,7 +435,7 @@
                     <tbody>
                         {% for i in stdata %}
                         <tr>
-                            <td>{{i.id}}</td>
+                            <td>{{ forloop.counter }}</td>
                             <!-- <td><a href="#"><img src="/examples/images/avatar/1.jpg" class="avatar" alt="Avatar">
                                     Michael Holz</a></td> -->
                             <td>{{i.stname}}</td>
@@ -286,8 +450,8 @@
                             <td>
                                 <!-- <a href="#" class="settings" title="Settings" data-toggle="tooltip"><i
                                         class="material-icons">&#xE8B8;</i></a> -->
-                                <a href="{% url 'delete_adm_station' i.id %}" class="delete" title="Delete" data-toggle="tooltip"><i
-                                        class="material-icons">&#xE5C9;</i></a>
+                                <a href="{% url 'delete_adm_station' i.id %}" class="delete" title="Delete"
+                                    data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -304,6 +468,32 @@
             </div>
         </div>
 </body>
+<script>
+    // your_app/static/your_app/js/overlay.js
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const openButton1 = document.getElementById('open-button1');
+        const openButton2 = document.getElementById('open-button2');
+        const openButton3 = document.getElementById('open-button3');
+        const overlay = document.getElementById('date-range-form-overlay');
+
+        // Initially hide the overlay
+        overlay.style.display = 'none';
+
+        function openOverlay(targetUrl) {
+            overlay.style.display = 'flex';
+            document.getElementById('date-form').action = targetUrl;
+        }
+
+        openButton1.addEventListener('click', () => openOverlay('/bookings/adm_user_receipt/'));
+        openButton2.addEventListener('click', () => openOverlay('/bookings/adm_booking_receipt/'));
+        openButton3.addEventListener('click', () => openOverlay('/bookings/adm_station_receipt/'));
+
+        const cancelButton = document.getElementById('cancel');
+        cancelButton.addEventListener('click', () => overlay.style.display = 'none');
+    });
+
+</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {

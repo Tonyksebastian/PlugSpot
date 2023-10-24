@@ -9,44 +9,111 @@
     integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
   <!-- Option 1: Include in HTML -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <style>
+    .navbar .btn {
+      color: aliceblue;
+      text-decoration: none;
+      position: relative;
+      background-color: transparent;
+    }
+
+    .navbar .btn:before {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: white;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .navbar .btn:hover {
+      color: #8cc63f;
+      /* Green color for text on hover */
+    }
+
+    .navbar .btn:hover:before {
+      background-color: #8cc63f;
+      /* Green color for underline on hover */
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .btn-pro {
+      text-decoration: none;
+      color: aliceblue;
+      background-color: #8cc63f;
+      padding: 5px;
+      width: 70px;
+      text-align: center;
+      border-radius: 5px;
+    }
+
+    .btn-pro:hover {
+      background-color: aliceblue;
+      color: black;
+    }
+
+    #date-range-form-overlay {
+      display: flex;
+      justify-content: center;
+      /* Horizontally center content */
+      align-items: flex-start;
+      /* Align content to the top */
+      position: fixed;
+      top: 5%;
+      /* 5% margin from the top */
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      /* Add a semi-transparent background overlay */
+    }
+
+    #date-range-form {
+      background-color: #fff;
+      /* Set the background color of the form */
+      padding: 20px;
+      /* Add some padding to the form */
+      border-radius: 5px;
+      /* Add rounded corners to the form */
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+      /* Add a shadow to the form */
+    }
+  </style>
 </head>
 
 <body>
-  {% comment %}
-  <!-- Button trigger modal -->
 
-  <!-- Modal -->
-
-  <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Are you sure?</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Do you really want to delete this record? This process cannot be undone.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <form method="post" action="{% url 'delete' i.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger" name="confirmation">Delete</button>
-                    </form>
-                    
-                </div>
-            </div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-1 justify-content-end px-5">
+    <a href="{% url 'index' %}" class="btn m-1">Home</a>
+    <a href="{% url 'closed' %}" class="btn m-1">Closed Stations</a>
+    <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
+  </nav>
+  <div class="head w-100 text-center text-primary fs-5 p-1">
+    <div class="container-sm mt-5">
+      <h5 class="text-center">Generate Report</h5>
+      <form method="post" action="{% url "station_receipt" %}" class="mx-auto">
+        {% csrf_token %}
+        <div class="form-group p-1">
+          <label for="start_date" class="fs-6">From Date:</label>
+          <input type="date" name="start_date" class="form-control-sm" id="start_date" required class="form-control">
         </div>
-    </div> -->
-  {% endcomment %}
-  <div class="col-md-6 text-md-center w-100">
-    <a href="{% url 'index' %}" class="btn btn-primary m-2">Home</a>
-  </div>
-
-  <div class="head w-100 text-center text-primary fs-4 p-4">
+        <div class="form-group">
+          <label for="end_date" class="fs-6">To Date:</label>
+          <input type="date" name="end_date" class="form-control-sm" id="end_date" required class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary p-1 btn-sm mt-2">Generate</button>
+        {% comment %} <button type="button" id="close-button" class="btn btn-sm btn-secondary mt-2">Close</button> {% endcomment %}
+      </form>
+    </div>
     <b>Your Stations</b>
   </div>
+  
 
   {% for i in mystation %}
   <div class="card shadow p-4 bg-light.bg-gradient">
@@ -70,7 +137,6 @@
 
             <span class="small text-success ms-3"><span class="fas fa-shopping-cart me-1">
                 maxslot {{ i.maxslot }}</span>
-              <b><span> Available slot: {{ i.available }}</span></b>
           </div>
           <b>
             <p>{{ i.place }}</p>
@@ -90,16 +156,36 @@
         </div>
         <!-- info-price-detail // -->
         <div class="d-grid gap-2 mt-4">
-          <!-- <a class="btn btn-tertiary btn-sm btn-primary" href="{% url 'bookstation' i.id %}">
-            Book Now
-          </a> -->
+
+
+
+          {% if existing_bookings %}
+
+          <form class="w-100" method="post" action="{% url 'hide' i.id %}" id="delete-form">
+            {% csrf_token %}
+            <button type="button" class="btn btn-tertiary btn-sm btn-info w-100" onclick="confirmHide()" disabled><i
+                class="bi bi-trash"></i>Shut Down</button>
+          </form>
+
+          {% else %}
+
+          <form class="w-100" method="post" action="{% url 'hide' i.id %}" id="delete-form">
+            {% csrf_token %}
+            <button type="button" class="btn btn-tertiary btn-sm btn-info w-100" onclick="confirmHide()" ><i
+                class="bi bi-trash"></i>Shut Down</button>
+          </form>
+
+          {% endif %}
+
           <a class="btn btn-tertiary btn-sm btn-success" href="{% url 'update' i.id %}">
             Update
           </a>
           <form class="w-100" method="post" action="{% url 'delete_items' i.id %}" id="delete-form">
             {% csrf_token %}
-            <button type="button" class="btn btn-tertiary btn-sm btn-danger w-100" onclick="confirmDelete()"><i class="bi bi-trash"></i> Delete</button>
+            <button type="button" class="btn btn-tertiary btn-sm btn-danger w-100" onclick="confirmDelete()"><i
+                class="bi bi-trash"></i> Delete</button>
           </form>
+
         </div>
       </div>
     </div>
@@ -110,14 +196,16 @@
     integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
     crossorigin="anonymous"></script>
 </body>
-
 <script>
   function confirmDelete() {
     if (confirm("Are you sure you want to delete this item?")) {
       document.getElementById('delete-form').submit();
     }
   }
+  function confirmHide() {
+    if (confirm("Are you sure you want to Close this Station?")) {
+      document.getElementById('delete-form').submit();
+    }
+  }
 </script>
-
-
 </html>

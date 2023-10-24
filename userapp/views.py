@@ -27,7 +27,6 @@ def login(request):
             print("Authenticated user:", user)  # Print the user for debugging
             if user is not None:
                 auth_login(request, user)
-                print("User authenticated:", user.email, user.role)
                 return redirect('http://127.0.0.1:8000/')
             else:
                 error_message = "Invalid login credentials."
@@ -71,7 +70,7 @@ def register(request):
         role = User.STOWNER
 
         if first_name and last_name and email and phone and role and password:
-            if User.objects.filter(email=email).exists():
+            if User.objects.filter(email=email,phone=phone).exists():
                 error_message = "Email is already registered."
             else:
                 # Create the user but don't activate it yet
@@ -93,7 +92,7 @@ def register(request):
                     otp=otp,
                     expires_at=timezone.now() + timezone.timedelta(minutes=10)
                 )
-                send_otp_email(user.email, otp)
+                # send_otp_email(user.email, otp)
                 
                 # Redirect to OTP verification page with user_id
                 return redirect('verify_otp', user_id=user.id)
@@ -123,7 +122,7 @@ def verify_otp(request, user_id=None):
 def send_otp_email(to_email, otp):
     subject = 'Your OTP for Account Verification'
     message = f'Your OTP is: {otp}'
-    from_email = 'tonyksebastian383@gmail.com'  # Replace with your email
+    from_email = 'info.plugspot@gmail.com'  # Replace with your email
     send_mail(subject, message, from_email, [to_email])
     
 
@@ -138,7 +137,7 @@ def vhowner(request):
         role = User.VHOWNER
         print(first_name, last_name, phone, password, role)
         if first_name and last_name and email and phone and role and password:
-            if User.objects.filter(email=email).exists():
+            if User.objects.filter(email=email,phone=phone).exists():
                 error_message = "Email is already registered."
                 return render(request, 'register_vh.html', {'error_message': error_message})
 
@@ -174,7 +173,6 @@ def profile(request):
         user_profile = UserProfile.objects.get(user_id=userid)
     else:
         user_profile=None
-
 
     if request.method == 'POST':
         # Update user fields
@@ -219,3 +217,4 @@ def profile(request):
         'user_profile': user_profile
     }
     return render(request, 'profile.html', context)
+

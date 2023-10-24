@@ -19,107 +19,50 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 </head>
-<script type="text/javascript"
-    src="https://www.bing.com/api/maps/mapcontrol?key=Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT"></script>
-<script>
-    var loc = {
-        cord: "9.5915891,76.521997",
-        head: "Your Location",
-    };
+<!-- Include Bing Maps API script -->
+<script type="text/javascript" src="https://www.bing.com/api/maps/mapcontrol?key=Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT"></script>
 
+<!-- Include Bing Maps API script -->
+<script type="text/javascript" src="https://www.bing.com/api/maps/mapcontrol?key=Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT"></script>
+
+<script>
     var map;
     var searchManager;
 
     function initMap() {
-        var cord = loc.cord;
-        var cordArray = cord.split(",");
-        var latitude = parseFloat(cordArray[0].trim());
-        var longitude = parseFloat(cordArray[1].trim());
-
         map = new Microsoft.Maps.Map("#myMap", {
-            credentials:
-                "Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT",
+            credentials: "Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT",
             zoom: 10,
         });
 
-        // Create markers for the predefined locations
-        var markerLocations = [
+        // Retrieve data from Django view and loop through it
+        var locations = [
+            {% for record in stdata %}
             {
-                location: new Microsoft.Maps.Location(9.5915891, 76.521997),
-                title: "Kottayam",
+                latitude: {{ record.latitude }},
+                longitude: {{ record.longitude }},
+                stname: "{{ record.stname }}",
+                place: "{{ record.place }}"
             },
-            {
-                location: new Microsoft.Maps.Location(9.4980588, 76.3387526),
-                title: "Alappuzha",
-            },
-            {
-                location: new Microsoft.Maps.Location(9.5512534, 76.6159242),
-                title: "Meenadom",
-            },
-            {
-                location: new Microsoft.Maps.Location(9.9773506, 76.4115431),
-                title: "Puthenkurishu",
-            },
-            {
-                location: new Microsoft.Maps.Location(9.5595, 76.7874),
-                title: "Kanjirappally",
-            },
-            {
-                location: new Microsoft.Maps.Location(8.524109, 76.9362462),
-                title: "Trivandrum",
-            },
-            {
-                location: new Microsoft.Maps.Location(latitude, longitude),
-                title: "{{loc.head}}",
-            },
+            {% endfor %}
         ];
 
-        for (var i = 0; i < markerLocations.length; i++) {
-            var marker = new Microsoft.Maps.Pushpin(markerLocations[i].location, {
-                title: markerLocations[i].title,
+        // Create markers for each location
+        for (var i = 0; i < locations.length; i++) {
+            var location = locations[i];
+            var marker = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(location.latitude, location.longitude), {
+                title: location.stname,
+                subTitle: location.place
             });
             map.entities.push(marker);
         }
-
-        // Set the center and zoom level of the map based on the markers
-        var bounds = Microsoft.Maps.LocationRect.fromLocations(
-            markerLocations.map(function (marker) {
-                return marker.location;
-            })
-        );
-        map.setView({ bounds: bounds });
-
-        // Initialize the search manager
-        Microsoft.Maps.loadModule("Microsoft.Maps.Search", function () {
-            searchManager = new Microsoft.Maps.Search.SearchManager(map);
-        });
-    }
-
-    function searchLocation() {
-        var query = document.getElementById("searchInput").value;
-        if (!searchManager) {
-            alert("Search functionality is not available.");
-            return;
-        }
-        searchManager.geocode({
-            where: query,
-            callback: function (results) {
-                if (results && results.results && results.results.length > 0) {
-                    var topResult = results.results[0];
-                    map.setView({ bounds: topResult.bestView });
-                    var location = topResult.location;
-                    var marker = new Microsoft.Maps.Pushpin(location);
-                    map.entities.push(marker);
-                } else {
-                    alert("No results found for the search query.");
-                }
-            },
-        });
     }
 
     // Call the initMap function once the page is loaded
     window.onload = initMap;
 </script>
+
+
 <style>
     body {
         font-family: 'Varela Round', sans-serif;
@@ -225,10 +168,57 @@
         display: inline-block;
         margin: 100px auto;
     }
+
+    .navbar .btn1 {
+        color: aliceblue;
+        text-decoration: none;
+        position: relative;
+        background-color: transparent;
+    }
+
+    .navbar .btn1:before {
+        content: "";
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: white;
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .navbar .btn1:hover {
+        color: #8cc63f;
+        /* Green color for text on hover */
+    }
+
+    .navbar .btn1:hover:before {
+        background-color: #8cc63f;
+        /* Green color for underline on hover */
+        transform: scaleX(1);
+        transform-origin: left;
+    }
+
+    .btn-pro {
+        text-decoration: none;
+        color: aliceblue;
+        background-color: #8cc63f;
+        padding: 5px;
+        width: 70px;
+        text-align: center;
+        border-radius: 5px;
+    }
+
+    .btn-pro:hover {
+        background-color: aliceblue;
+        color: black;
+    }
 </style>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark justify-content-end px-5">
         <div class="container-fluid">
             <!-- Your other navbar content -->
 
@@ -252,19 +242,18 @@
 
                     </div>
                 </div>
+                <div class="button px-2">
+                    <!-- Home button -->
+                    <a href="{% url 'index' %}" class="btn1 m-1">Home</a>
+                    <a href="{% url 'mybookings' %}" class="btn1 m-1">My Bookings</a>
+                    <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
 
-                <!-- Home button -->
-                <div class="col-md-6 text-md-center">
-                    <a href="{% url 'index' %}" class="btn btn-primary">Home</a>
                 </div>
             </div>
         </div>
     </nav>
-
-
-
-    <div class="container-fluid col-12 d-flex justify-content-center">
-        <div class="map" id="myMap" style="width: 100%; height: 700px"></div>
+    <div class="container-fluid col-12 d-flex justify-content-center bg-dark">
+        <div class="map" id="myMap" style="width: 90%; height: 500px"></div>
     </div>
     <form>
         {% for i in stdata %}
@@ -290,8 +279,9 @@
                             <span class="badge badge-pill badge-gray ms-2">4.7</span> -->
 
                             <span class="small text-success ms-3"><span class="fas fa-shopping-cart me-1">
-                                    maxslot {{ i.maxslot }}</span>
-                                    <b><span>  Available slot: {{ i.available }}</span></b>                        </div>
+                                    maxslot : {{ i.maxslot }}</span>
+                                {% comment %} <b><span> Available slot: {{ i.available }}</span></b> {% endcomment %}
+                        </div>
                         <b>
                             <p>{{ i.place }}</p>
                         </b>
@@ -299,29 +289,31 @@
                             Contact :
                             <a class="text-decoration-none text-dark" href="tel:{{  i.contact }}">{{ i.contact }}</a>
                             </p>
-                          </b>
+                        </b>
                         <p>{{ i.description }}</p>
                     </div>
                 </div>
                 <div class="col-12 col-md-3">
                     <div class="d-flex align-items-center">
                         <span class="h5 mb-0 text-gray text-through me-2">
-                            {{ i.price}}/hr</span>
+                            {{ i.price}}/Unit</span>
                     </div>
                     <!-- info-price-detail // -->
-                    <div class="d-grid gap-2 mt-4">
-                        <a class="btn btn-tertiary btn-sm btn-primary" href="{% url 'bookstation' station_id=i.id %}">
-                            Book Now
-                        </a>
-                        <a href="#" class="btn btn-tertiary btn-sm btn-outline-danger favorite-button">
-                            <span class="fa fa-heart me-1"></span> Favorite
-                        </a>
-                    </div>
+                        <div class="d-grid gap-2 mt-4">
+                            <a class="btn btn-tertiary btn-sm btn-primary" id="book"
+                                href="{% url 'bookstation' station_id=i.id %}">
+                                Book Now
+                            </a>
 
+                            {% comment %} <a href="#" class="btn btn-tertiary btn-sm btn-outline-danger favorite-button">
+                                <span class="fa fa-heart me-1"></span> Favorite
+                            </a> {% endcomment %}
+                        </div>
+
+                    </div>
                 </div>
             </div>
-        </div>
-        {% endfor %}
+            {% endfor %}
     </form>
 </body>
 

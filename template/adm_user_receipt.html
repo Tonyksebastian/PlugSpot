@@ -37,20 +37,32 @@
       background-color: #f2f2f2;
     }
 
-    .user-id {
+    .first-name {
       width: 20%;
     }
 
-    .payment-id {
+    .last-name {
+      width: 20%;
+    }
+
+    .phone {
+      width: 20%;
+    }
+
+    .email {
+      width: 20%;
+    }
+
+    .role {
       width: 20%;
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <h2>Receipt for all booking</h2>
+    <h2>User details</h2>
   </div>
-  <div class="header2">
+  <div class "header2">
     <h3>
       {% if start_date and end_date %}
       Period: {{ start_date|date:"Y-m-d" }} to {{ end_date|date:"Y-m-d" }}
@@ -60,37 +72,28 @@
     </h3>
   </div>
   <table>
-    <thead>
-        <tr>
-            <th>Station Name</th>
-            <th>Place</th>
-            <th>Slot Number</th>
-            <th>Date</th>
-            <th>Start_time</th>
-            <th>End_time</th>
-            
-        </tr>
-    </thead>
+    <tr>
+      <th class="first-name">First Name</th>
+      <th class="last-name">Last Name</th>
+      <th class="phone">Phone</th>
+      <th class="email">Email</th>
+      <th class="role">Role</th>
+    </tr>
     <tbody>
-
-        {% for i in booking_history %}
-            <tr>
-                <td >{{ i.stname }} </td>
-                <td>{{ i.place }}</td>
-                <td>{{ i.slotnumber }}</td>
-                <td>{{ i.date }}</td>
-                <td>{{ i.start_time }}</td>
-                <td>{{ i.end_time }}</td>
-            </tr>
-
-        {% empty %} 
-            <tr>
-                <td colspan="4">No purchases found in the specified date range.</td>
-            </tr>
-        {% endfor %}
+      {% for i in user_history %}
+      <tr>
+        <td class="first-name">{{ i.first_name }}</td>
+        <td class="last-name">{{ i.last_name }}</td>
+        <td class="phone">{{ i.phone }}</td>
+        <td class="email">{{ i.email }}</td>
+        <td class="role">{{ i.role }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">No user found.</td>
+      </tr>
+      {% endfor %}
     </tbody>
-</table>
-
+  </table>
 </body>
 </html>
-

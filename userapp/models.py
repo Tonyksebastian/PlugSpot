@@ -65,8 +65,7 @@ class CustomUser(AbstractUser):
         return self.email
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
-    
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)  
     country = models.CharField(max_length=15, blank=True, null=True)
     district = models.CharField(max_length=15, blank=True, null=True)
     addressline1 = models.CharField(max_length=15, blank=True, null=True)

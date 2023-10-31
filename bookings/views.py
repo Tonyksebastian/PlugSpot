@@ -27,7 +27,7 @@ razorpay_client = razorpay.Client(
 def predict(request):
     return render(request,'home.html')
 
-@login_required  # viewing all station added
+@login_required(login_url='http://127.0.0.1:8000/login/')
 def booking(request):
     expired()   
     stdata = station.objects.filter(hidden=False)
@@ -130,19 +130,9 @@ def expired():
     expired_bookings = booknow.objects.filter(
         Q(date__lt=now.date()) | (Q(date=now.date()) & Q(end_time__lt=now.time())) & Q(del_status=False)
     )
-
-    
     for booking in expired_bookings:
-        # station1 = booking.station_id # Mark the station as unavailable
-        # station1.available += 1  # Increase the available slot count
-        # station1.save()
         booking.del_status = True 
         booking.save()
-        # Delete the expired booking
-        # booking.delete()
-
-        # Optionally, you might want to print some information about the expired booking
-        print(f"Booking ID {booking.id} has expired and has been deleted.")
 
 
 def calculate_cost(request, stid2):
@@ -298,7 +288,7 @@ def paymenthandler(request, booking_id=None, sub_id=None):
                 booking.status = True
                 booking.save()
                 
-                # send_welcome_email(payment.user.username, amount, payment.user.email, booking)
+                send_welcome_email(payment.user.username, amount, payment.user.email, booking)
             except booknow.DoesNotExist:
                 # Handle the case where the booking with the given ID doesn't exist.
                 pass
@@ -415,6 +405,7 @@ def delete_booking(request, stid2):
 
 
 def dashboard(request):
+    expired()
     data = CustomUser.objects.all()
     total_user = CustomUser.objects.filter(is_active=True).count()
     total_book = booknow.objects.filter(del_status=False).count()
@@ -458,7 +449,7 @@ def station_dash(request):
     return render(request, "station_dash.html", context)
 
 def booking_dash(request):
-    stdata = booknow.objects.filter()
+    stdata = booknow.objects.filter(del_status=False)
     data=booknow.objects.all()
     data = CustomUser.objects.all()
     total_user = CustomUser.objects.filter(is_active=True).count()
@@ -528,19 +519,8 @@ def hide(request, stid2):
         # Check if there are any bookings for the current station
         existing_bookings = booknow.objects.filter(station_id=station_to_hide.id)
         
-        
-        if existing_bookings.exists():
-        
-            error_message = 'booking exists'
-            # You can handle this case by displaying an error message or taking other actions
-            return redirect('mystation')   
-            # No bookings found, it's safe to hide the station
-            
-        else:
-        
-
-            station_to_hide.hidden = True
-            station_to_hide.save()    
+        station_to_hide.hidden = True
+        station_to_hide.save()    
         return redirect('mystation')    
     return render(request, 'mystation.html',{'existing_bookings':existing_bookings})
 
@@ -555,16 +535,20 @@ def delete_items(request, stid2):
 def delete_adm_station(request, stid2):
     queryset = station.objects.get(id=stid2)
     queryset.hidden=True
+    queryset.save()
     return redirect('station_dash')
 
 def delete_adm_user(request, stid2):
     queryset = CustomUser.objects.get(id=stid2)
     queryset.is_active = False
+    queryset.save()
     return redirect('dashboard')
 
 def delete_adm_book(request, stid2):
+    print(stid2)
     queryset = booknow.objects.get(id=stid2)
     queryset.del_status = True
+    queryset.save()
     return redirect('booking_dash')
 
 def print_as_pdf(request, stid2):
@@ -572,9 +556,10 @@ def print_as_pdf(request, stid2):
     data = booknow.objects.filter(id=stid2)
     cost = On_payment.objects.get(booking_id=stid2)
     cost=cost.amount
-    cost=cost/100
+    cost=cost
     
     total_cost=int(cost)
+    print(cost)
     template_path = 'template\printpdf.html'  # Update with the actual path to your HTML template.
 
     # Context data to pass to the template
@@ -808,10 +793,10 @@ def adm_payment_receipt(request):
         end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
 
         # Query the purchase history for records within the specified date range
-        payment_history = On_payment.objects.filter(
-            date__gte=start_date,
-            date__lte=end_date
-        ).order_by('-date')
+        payment_history = On_payment.objects.all(
+            # date__gte=start_date,
+            # date__lte=end_date
+        )
   
         context = {
             'payment_history': payment_history,
@@ -822,7 +807,7 @@ def adm_payment_receipt(request):
 
 
         # Render the receipt template to HTML
-        template_name = 'adm_book_receipt.html'
+        template_name = 'adm_payment_receipt.html'
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f'inline; filename="receipt_for_purchases_from_{start_date}_to_{end_date}.pdf"'
         
@@ -857,12 +842,10 @@ def adm_station_receipt(request):
             # 'total_price': total_price,  # Pass the total_price to the template
         }    
 
-
         # Render the receipt template to HTML
         template_name = 'adm_station_receipt.html'
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f'inline; filename="receipt_for_purchases_from_{start_date}_to_{end_date}.pdf"'
-        
         buffer = BytesIO()
         pdf = pisa.pisaDocument(BytesIO(render_to_string(template_name, context).encode("UTF-8")), buffer)
 
@@ -896,7 +879,7 @@ def adm_user_receipt(request):
 
 
         # Render the receipt template to HTML
-        template_name = 'adm_book_receipt.html'
+        template_name = 'adm_user_receipt.html'
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f'inline; filename="receipt_for_purchases_from_{start_date}_to_{end_date}.pdf"'
         

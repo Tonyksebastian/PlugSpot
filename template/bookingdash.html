@@ -314,22 +314,36 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
         <a href="{% url 'index' %}" class="btn m-1">Home</a>
+    
+        <!-- <div class="dropdown">
+          <button class="btn m-1 dropdown-toggle" type="button" id="printDropdown" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Print details
+          </button>
+          <ul class="dropdown-menu" id="dropdown" aria-labelledby="printDropdown">
+            <li><select id="open-button1" class="dropdown-item" value="Print User Details"></select></li>
+            <li><select id="open-button2" class="dropdown-item">Print Bookings</select></li>
+            <li><select id="open-button3" class="dropdown-item">Print Stations</select></li>
+          </ul>
+        </div> -->
+    
         <div class="dropdown">
-            <button class="btn m-1 dropdown-toggle" type="button" id="printDropdown" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                Print details
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="printDropdown">
-                <li><button id="open-button1" class="dropdown-item">Print User Details</button></li>
-                <li><button id="open-button2" class="dropdown-item">Print Bookings</button></li>
-                <li><button id="open-button3" class="dropdown-item">Print Stations</button></li>
-            </ul>
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Print details
+          </button>
+          <div class="dropdown-menu" id="dropdown"  aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" id="open-button1" href="#">Print User Details</a>
+            <a class="dropdown-item" id="open-button2" href="#">Print Bookings</a>
+            <a class="dropdown-item" id="open-button3" href="#">Print Stations</a>
+            <a class="dropdown-item" id="open-button4" href="#">Print Payments</a>
+    
+          </div>
         </div>
         <a href="{% url 'add_subscription' %}" class="btn m-1">Add subscription</a>
+        <a href="{% url 'check_bookings' %}" class="btn m-1">Ended Bookings</a>
         <a id="logout" class="btn m-1" href="{% url 'logout' %}">Logout</a>
         <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
-    </nav>
-
+      </nav>
     <div class="container-fluid mt-5 w-50">
         <div class="row justify-content-between">
             <div class="col-sm-4">

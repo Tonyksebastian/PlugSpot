@@ -92,7 +92,7 @@ def register(request):
                     otp=otp,
                     expires_at=timezone.now() + timezone.timedelta(minutes=10)
                 )
-                # send_otp_email(user.email, otp)
+                send_otp_email(user.email, otp)
                 
                 # Redirect to OTP verification page with user_id
                 return redirect('verify_otp', user_id=user.id)

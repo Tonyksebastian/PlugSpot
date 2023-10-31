@@ -131,7 +131,7 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="is_holiday">Is it a holiday?</label>
-                <select name="is_holiday" id="is_holiday" class="form-control">
+                <select name="is_holiday" id="is_holiday" class="form-control" required>
                     <option value="None">None</option>
                     <option value="Holiday">Holiday</option>
                 </select>
@@ -140,6 +140,7 @@
                 <label for="temperature">Temperature (in celsius)</label>
                 <input type="text" name="temperature" id="temperature" class="form-control0" required>
             </div>
+            <span id="tempspan"></span>
             <div class="form-group">
                 <label for="hour">Hour of the day (0-23)</label>
                 <input type="text" name="hour" id="hour" class="form-control" required>
@@ -162,7 +163,7 @@
             </div>
             <div class="form-group">
                 <label for="location">Location</label>
-                <select name="location" id="location" class="form-control" >
+                <select name="location" id="location" class="form-control" required>
                     <option value="urban">Urban</option>
                     <option value="rural">Rural</option>
                     <option value="remote">Remote</option>
@@ -189,12 +190,243 @@
             <img src="data:image/png;base64,{{ weather_chart_image }}" alt="Weather Condition Chart">
         </div>
         <!-- Line Chart for Temperature and Year -->
-<div>
+<!-- <div>
     <h2>Temperature Over the Years</h2>
     <img src="data:image/png;base64,{{ temperature_year_chart_image }}" alt="Temperature Over the Years">
-</div>
+</div> -->
     </div>
     {% endif %}
 </body>
-
+<!-- <script>
+    $(document).ready(function () {
+      $("#temperature").keyup(function () {
+        validateTemp("#temperature");
+      });
+      $("#hour").keyup(function () {
+        validateHour("#hour");
+      });
+      $("#month_day").keyup(function () {
+        validateDay("#month_day");
+      });
+  
+      $("#month").keyup(function () {
+        validateMonth("#month");
+      });
+  
+      $("#year").keyup(function () {
+        validateYear("#year");
+      });
+  
+      $("#weekday").keyup(function () {
+        validateWeekday("#weekday");
+      });
+     
+    });
+  
+  
+    function validateTemp(fieldId) {
+      var numberRegex = /^\d+$/; // Regular expression to allow only digits
+      var phoneNumber = $(fieldId).val();
+      var submitButton = $("#btn"); // Adjust the ID of your submit button element
+  
+      if (phoneNumber === "") {
+        $("#tempspan").html("Enter the Phone number").css("color", "red");
+        submitButton.prop("disabled", true); // Disable the submit button
+        return false;
+      } else if (!numberRegex.test(phoneNumber)) {
+        $("#tempspan").html("Invalid phone Number").css("color", "red");
+        submitButton.prop("disabled", true); // Disable the submit button
+        return false;
+      } else if (phoneNumber.length !== 10 || !['7', '8', '9'].includes(phoneNumber.charAt(0))) {
+        $("#numspan").html("Use correct phone Number").css("color", "red");
+        submitButton.prop("disabled", true); // Disable the submit button
+        return false;
+      } else if (/(\d)\1{4,}/.test(phoneNumber)) {
+        $("#numspan").html("Avoid more than 5 consecutive numbers").css("color", "red");
+        disableSubmitButton();
+        return false;
+      } else {
+        $("#numspan").html("");
+        submitButton.prop("disabled", false); // Enable the submit button
+        return true;
+      }
+    }
+  
+  
+    function validatefName(fieldId) {
+      var name = $(fieldId).val();
+      var lettersWithSpaces = /^[A-Za-z\s]+$/;
+      var submitButton = $("#btn");
+      if (name.trim() === "") {
+        $("#fnspan").html("Enter the First Name").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else if (!lettersWithSpaces.test(name)) {
+        $("#fnspan").html("First Name field required only alphabet characters with spaces").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else {
+        $("#fnspan").html("");
+        submitButton.prop("disabled", false);
+        return true
+      }
+    }
+  
+    function validatesName(fieldId) {
+      var name = $(fieldId).val();
+      var lettersWithSpaces = /^[A-Za-z\s]+$/;
+      var submitButton = $("#btn");
+      if (name.trim() === "") {
+        $("#snspan").html("Enter the Second Name").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else if (!lettersWithSpaces.test(name)) {
+        $("#snspan").html("Second Name field required only alphabet characters with spaces").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else {
+        $("#snspan").html("");
+        submitButton.prop("disabled", false);
+        return true
+      }
+    }
+    function validateAdd1(fieldId) {
+      var name = $(fieldId).val();
+      var lettersWithSpaces = /^[A-Za-z\s]+$/;
+      var submitButton = $("#btn");
+      if (name.trim() === "") {
+        $("#sapnadd1").html("Enter Your Address").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else if (!lettersWithSpaces.test(name)) {
+        $("#sapnadd1").html("Address field required only alphabet characters with spaces").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else {
+        $("#sapnadd1").html("");
+        submitButton.prop("disabled", false);
+        return true
+      }
+    }
+    function validateAdd2(fieldId) {
+      var name = $(fieldId).val();
+      var lettersWithSpaces = /^[A-Za-z\s]+$/;
+      var submitButton = $("#btn");
+      if (name.trim() === "") {
+        $("#spanadd2").html("Enter Your Secondary Address").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else if (!lettersWithSpaces.test(name)) {
+        $("#spanadd2").html("Secondary Address field required only alphabet characters with spaces").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else {
+        $("#spanadd2").html("");
+        submitButton.prop("disabled", false);
+        return true
+      }
+    }
+  
+    function validatCity(fieldId) {
+      var name = $(fieldId).val();
+      var lettersWithSpaces = /^[A-Za-z\s]+$/;
+      var submitButton = $("#btn");
+      if (name.trim() === "") {
+        $("#cityspan").html("Enter Your City").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else if (!lettersWithSpaces.test(name)) {
+        $("#cityspan").html("City field required only alphabet characters with spaces").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else {
+        $("#cityspan").html("");
+        submitButton.prop("disabled", false);
+        return true
+      }
+    }
+  
+    function validatDistrict(fieldId) {
+      var name = $(fieldId).val();
+      var lettersWithSpaces = /^[A-Za-z\s]+$/;
+      var submitButton = $("#btn");
+      if (name.trim() === "") {
+        $("#distspan").html("Enter Your District").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else if (!lettersWithSpaces.test(name)) {
+        $("#distspan").html("District field required only alphabet characters with spaces").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else {
+        $("#distspan").html("");
+        submitButton.prop("disabled", false);
+        return true
+      }
+    }
+  
+    function validatState(fieldId) {
+      var name = $(fieldId).val();
+      var lettersWithSpaces = /^[A-Za-z\s]+$/;
+      var submitButton = $("#btn");
+      if (name.trim() === "") {
+        $("#statespan").html("Enter Your State").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else if (!lettersWithSpaces.test(name)) {
+        $("#statespan").html("State field required only alphabet characters with spaces").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else {
+        $("#statespan").html("");
+        submitButton.prop("disabled", false);
+        return true
+      }
+    }
+  
+    function validatCountry(fieldId) {
+      var name = $(fieldId).val();
+      var lettersWithSpaces = /^[A-Za-z\s]+$/;
+      var submitButton = $("#btn");
+      if (name.trim() === "") {
+        $("#countryspan").html("Enter Your Country").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else if (!lettersWithSpaces.test(name)) {
+        $("#countryspan").html("Country field required only alphabet characters with spaces").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else {
+        $("#countryspan").html("");
+        submitButton.prop("disabled", false);
+        return true
+      }
+    }
+  
+    function validatPincode(fieldId) {
+      var name = $(fieldId).val();
+      var lettersWithSpaces = /^\d{6}$/;
+      var submitButton = $("#btn");
+      if (name.trim() === "") {
+        $("#pinspan").html("Enter Your Pincode").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else if (!lettersWithSpaces.test(name)) {
+        $("#pinspan").html("Pincode field required only numbers").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else {
+        $("#pinspan").html("");
+        submitButton.prop("disabled", false);
+        return true
+      }
+    }
+    function checkall() {
+      if (validatefName() && validatesName() && validatPincode() && validateAdd1() && validatCountry() && validatState() && validateAdd2() && validatCity() && validatDistrict() && validatePhoneNumber())
+        return true;
+  
+      return false;
+    }
+  
+  </script> -->
 </html>

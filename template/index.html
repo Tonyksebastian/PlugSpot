@@ -121,11 +121,12 @@
                         <li>
                           <a id="public_station" href="{% url 'booking' %}">Public Stations</a>
                         </li>  
-                        {% if user.role == 'stowner' or 'admin' %}
+                        {% if user.role == 'stowner' or user.role == 'admin' %}
                         <li>
                           <a href="{% url 'addstation' %}">Add Stations</a>
                         </li>
-                        {% endif %}
+                      {% endif %}
+                      
                         {% comment %} <li>
                           <a href="solar-clean-energy.html">Solar & Clean Energy</a>
                         </li>

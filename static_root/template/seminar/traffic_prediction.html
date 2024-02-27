@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Traffic Prediction</title>
+</head>
+<body>
+    <h1>Traffic Prediction</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Predict Traffic</button>
+    </form>
+    {% if prediction %}
+    <h2>Predicted Traffic Condition:</h2>
+    <p>{{ prediction }}</p>
+    {% endif %}
+</body>
+</html>

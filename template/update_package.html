@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Service Package</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+        <a href="{% url 'index' %}" class="btn m-1">Home</a>
+        <a href="{% url 'select_station' %}" class="btn m-1">Available Service Stations</a>
+        <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
+    </nav>
+    <div class="container">
+        <div class="service-form">
+            <h2 class="form-title">Update Service Package</h2>
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" class="form-control" id="service-name" name="pkg_name" placeholder="Package Name" value="{{ package.package_name }}" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="service-duration" name="pkg_duration" placeholder="Duration (in hours)" value="{{ package.duration }}" required>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" id="service-description" name="pkg_services" rows="5" placeholder="Services" required>{{ package.package_desc }}</textarea>
+                </div>
+                <div class="form-group">
+                    <input type="number" class="form-control" id="service-price" name="org_price" placeholder="Orginal Price" value="{{ package.orginal_price }}" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" class="form-control" id="service-price" name="dic_price" placeholder="Discount Price" value="{{ package.discount_price }}" required>
+                </div>
+                <div class="form-group">
+                    <input type="file" id="service-image" name="pkg_image" accept="image/*" placeholder="Service Image">
+                </div>
+                <button type="submit" class="btn btn-submit bg-primary">Update Package</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

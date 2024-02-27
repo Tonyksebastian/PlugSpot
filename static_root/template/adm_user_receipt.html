@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      text-align: center;
+      background-color: #f2f2f2;
+      padding: 10px;
+    }
+
+    .header h2 {
+      margin: 0;
+    }
+
+    .header2 {
+      text-align: center;
+      padding: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .first-name {
+      width: 20%;
+    }
+
+    .last-name {
+      width: 20%;
+    }
+
+    .phone {
+      width: 20%;
+    }
+
+    .email {
+      width: 20%;
+    }
+
+    .role {
+      width: 20%;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>User details</h2>
+  </div>
+  <div class "header2">
+    <h3>
+      {% if start_date and end_date %}
+      Period: {{ start_date|date:"Y-m-d" }} to {{ end_date|date:"Y-m-d" }}
+      {% elif start_date %}
+      Date: {{ start_date|date:"Y-m-d" }}
+      {% endif %}
+    </h3>
+  </div>
+  <table>
+    <tr>
+      <th class="first-name">First Name</th>
+      <th class="last-name">Last Name</th>
+      <th class="phone">Phone</th>
+      <th class="email">Email</th>
+      <th class="role">Role</th>
+    </tr>
+    <tbody>
+      {% for i in user_history %}
+      <tr>
+        <td class="first-name">{{ i.first_name }}</td>
+        <td class="last-name">{{ i.last_name }}</td>
+        <td class="phone">{{ i.phone }}</td>
+        <td class="email">{{ i.email }}</td>
+        <td class="role">{{ i.role }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">No user found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

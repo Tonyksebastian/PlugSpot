@@ -18,8 +18,8 @@ def hi(request):
     return render(request,'index.html')
 
 # Load the trained model
-with open('models/traffic_classification_model.pkl', 'rb') as model_file:
-    clf = pickle.load(model_file)
+# with open('models/traffic_classification_model.pkl', 'rb') as model_file:
+#     clf = pickle.load(model_file)
 
 def predict_traffic(request):
     if request.method == 'POST':

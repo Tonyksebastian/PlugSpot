@@ -1,0 +1,37 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Service</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Update Service</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="ser_img">Choose Image</label>
+                <input type="file" class="form-control" name="ser_img" id="ser_img" required>
+                <img src="{{ service.photo.url }}" alt="Service Image" width="100">
+            </div>
+            <div class="form-group">
+                <label for="ser_name">Service Name</label>
+                <input type="text" class="form-control" name="ser_name" id="ser_name" value="{{ service.ser_name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="ser_desc">Service Description</label>
+                <textarea class="form-control" name="ser_desc" id="ser_desc" rows="5" required>{{ service.description }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="ser_price">Service Price</label>
+                <input type="number" class="form-control" name="ser_price" id="ser_price" value="{{ service.price }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Service</button>
+        </form>
+    </div>
+</body>
+</html>

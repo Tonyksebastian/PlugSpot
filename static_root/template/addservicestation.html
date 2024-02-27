@@ -1,0 +1,416 @@
+{% load static %}
+<!DOCTYPE html>
+<scr lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  </head>
+  <script type="text/javascript"
+    src="https://www.bing.com/api/maps/mapcontrol?callback=loadMapScenario&key=Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT"></script>
+  <script>
+    function getCoordinates() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+
+    function showPosition(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      // Populate the latitude and longitude input fields with the obtained values
+      document.getElementById('lat').value = latitude;
+      document.getElementById('long').value = longitude;
+    }
+  </script>
+
+  <style>
+    .navbar .btn {
+      color: aliceblue;
+      text-decoration: none;
+      position: relative;
+      background-color: transparent;
+    }
+
+    .navbar .btn:before {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: white;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .navbar .btn:hover {
+      color: #8cc63f;
+      /* Green color for text on hover */
+    }
+
+    .navbar .btn:hover:before {
+      background-color: #8cc63f;
+      /* Green color for underline on hover */
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    h2 {
+      color: #8cc63f;
+      padding: 3px;
+      font-weight: bold;
+      border: solid 3px #8cc63f;
+    }
+
+    .btn-pro {
+      text-decoration: none;
+      color: aliceblue;
+      background-color: #8cc63f;
+      padding: 5px;
+      width: 70px;
+      text-align: center;
+      border-radius: 5px;
+    }
+
+    .btn-pro:hover {
+      background-color: aliceblue;
+      color: black;
+    }
+
+    /* Custom CSS (You can keep your custom styles here) */
+
+    @media (min-width: 1025px) {
+      .h-custom {
+        height: 100vh !important;
+      }
+    }
+
+    /* You can keep your existing styles here */
+  </style>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+      <a href="{% url 'index' %}" class="btn m-1">Home</a>
+      <a href="{% url 'booking' %}" class="btn m-1">Available Stations</a>
+      <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
+    </nav>
+
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card mb-2">
+            <div class="card-header text-center">
+              <h2>Registration Form</h2>
+            </div>
+            <div class="card-body">
+              <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                  <!-- Left Column -->
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="stname">Service Station Name</label>
+                      <input type="text" id="stname" name="stname" class="form-control" required>
+                      <span id="stnamespan"></span>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="ownername">Owner Name</label>
+                      <input type="text" id="ownername" name="ownername" class="form-control" required>
+                      <span id="ownspan"></span>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="loc">Location</label>
+                      <input type="text" id="loc" name="loc" class="form-control" required>
+                      <span id="locspan"></span>
+                    </div>
+                    <div class="form-group">
+                      <label for="number">Phone Number</label>
+                      <input type="tel" id="number" name="number" class="form-control" required>
+                      <span id="numspan"></span>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="max-slot">Max Slot</label>
+                      <select id="maxslot" class="form-control" name="max_slot">
+                        <option value="">Select Max Slot</option>
+                        {% for num in stnumber %}
+                        <option value="{{ num }}">{{ num }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+
+
+                  </div>
+
+                  <!-- Right Column -->
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="desc">Description</label>
+                      <textarea class="form-control" id="desc" name="desc" rows="2"></textarea>
+                      <span id="descspan"></span>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="latitude">Latitude</label>
+                      <input type="text" id="lat" class="form-control" name="latitude" required>
+                      <span id="latspan"></span>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="longitude">Longitude</label>
+                      <input type="text" id="long" class="form-control" name="longitude" required>
+                      <span id="longspan"></span>
+                    </div>
+
+                    <button type="button" onclick="getCoordinates()" class="btn btn-primary btn-sm">Get
+                      Coordinates</button>
+                    <br>
+
+
+                    <!-- Rest of your HTML code for the registration form -->
+
+                    <!-- <div class="form-group">
+                    <label for="price">Price/Unit</label>
+                    <input type="text" id="price" class="form-control" name="price" value="15" readonly required>
+                    <span id="pricespan"></span>
+                  </div> -->
+
+                    <div class="form-group">
+                      <label for="form3Examplev5">Choose Photo</label>
+                      <input type="file" id="form3Examplev5" name="photo" class="form-control" accept="image/*">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-center">
+                  <button type="submit" id="btn1" class="btn btn-primary btn-md">Register</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+  </body>
+  <!-- Add Bootstrap JS (jQuery and Popper.js) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Include Bing Maps API -->
+  <script>
+    $(document).ready(function () {
+      $("#stname").keyup(function () {
+        validatestnName("#stname");
+      });
+      $("#ownername").keyup(function () {
+        validatesoName("#ownername");
+      });
+      $("#loc").keyup(function () {
+        validateloc("#loc");
+      });
+
+      $("#desc").keyup(function () {
+        validatesdesc("#desc");
+      });
+
+      // $("#lat").keyup(function () {
+      //   validateslat("#lat");
+      // });
+
+      // $("#long").keyup(function () {
+      //   validateslong("#long");
+      // });
+      $("#number").keyup(function () {
+        validatePhoneNumber("#number");
+      });
+
+      $("#price").keyup(function () {
+        validatesprice("#price");
+      });
+    });
+
+    function validatestnName(fieldId) {
+      var name = $(fieldId).val();
+      var lettersWithSpaces = /^[A-Za-z\s]+$/;
+      var submitButton = $("#btn1");
+      if (name.trim() === "") {
+        $("#stnamespan").html("Enter the Name").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else if (!lettersWithSpaces.test(name)) {
+        $("#stnamespan").html("Name field required only alphabet characters with spaces").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else {
+        $("#stnamespan").html("");
+        submitButton.prop("disabled", false);
+        return true
+      }
+    }
+
+    function validatePhoneNumber(fieldId) {
+      var numberRegex = /^\d+$/; // Regular expression to allow only digits
+      var phoneNumber = $(fieldId).val();
+      var submitButton = $("#btn1"); // Adjust the ID of your submit button element
+
+      if (phoneNumber === "") {
+        $("#numspan").html("Enter the Phone number").css("color", "red");
+        submitButton.prop("disabled", true); // Disable the submit button
+        return false;
+      } else if (!numberRegex.test(phoneNumber)) {
+        $("#numspan").html("Invalid phone Number").css("color", "red");
+        submitButton.prop("disabled", true); // Disable the submit button
+        return false;
+      } else if (phoneNumber.length !== 10 || !['7', '8', '9'].includes(phoneNumber.charAt(0))) {
+        $("#numspan").html("Use correct phone Number").css("color", "red");
+        submitButton.prop("disabled", true); // Disable the submit button
+        return false;
+      } else if (/(\d)\1{4,}/.test(phoneNumber)) {
+        $("#numspan").html("Avoid more than 5 consecutive numbers").css("color", "red");
+        disableSubmitButton();
+        return false;
+      } else {
+        $("#numspan").html("");
+        submitButton.prop("disabled", false); // Enable the submit button
+        return true;
+      }
+    }
+
+    function validatesoName(fieldId) {
+      var name = $(fieldId).val();
+      var lettersWithSpaces = /^[A-Za-z\s]+$/;
+      var submitButton = $("#btn1");
+      if (name.trim() === "") {
+        $("#ownspan").html("Enter the Owner name").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else if (!lettersWithSpaces.test(name)) {
+        $("#ownspan").html("Name field required only alphabet characters with spaces").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else {
+        $("#ownspan").html("");
+        submitButton.prop("disabled", false);
+        return true
+      }
+    }
+    function validateloc(fieldId) {
+      var name = $(fieldId).val();
+      var lettersWithSpaces = /^[A-Za-z0-9\s!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+$/;
+      var submitButton = $("#btn1");
+      if (name.trim() === "") {
+        $("#locspan").html("Enter the Location").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else if (!lettersWithSpaces.test(name)) {
+        $("#locspan").html("Name field required only alphabet characters with spaces").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false
+      } else {
+        $("#locspan").html("");
+        submitButton.prop("disabled", false);
+        return true
+      }
+    }
+
+    function validatesdesc(fieldId) {
+      var description = $(fieldId).val();
+      var alphanumericWithSpaces = /^[A-Za-z0-9\s!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+$/;
+      var submitButton = $("#btn1");
+
+      if (description.trim() === "") {
+        $("#descspan").html("Enter the Description").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false;
+      } else if (!alphanumericWithSpaces.test(description)) {
+        $("#descspan").html("Description should only contain letters, numbers, and spaces").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false;
+      } else {
+        $("#descspan").html("");
+        submitButton.prop("disabled", false);
+        return true;
+      }
+    }
+
+
+    // function validateslat(fieldId) {
+    //   var latitude = $(fieldId).val();
+    //   var latitudePattern = /^-?([1-8]?[0-9]\.{1}\d{1,6}|90\.0{1})$/; // Matches valid latitude values
+    //   var submitButton = $("#btn1");
+
+    //   if (latitude.trim() === "") {
+    //     $("#latspan").html("Enter the Latitude").css("color", "red");
+    //     submitButton.prop("disabled", true);
+    //     return false;
+    //   } else if (!latitudePattern.test(latitude)) {
+    //     $("#latspan").html("Latitude field required a valid latitude value").css("color", "red");
+    //     submitButton.prop("disabled", true);
+    //     return false;
+    //   } else {
+    //     $("#latspan").html("");
+    //     submitButton.prop("disabled", false);
+    //     return true;
+    //   }
+    // }
+
+    // function validateslong(fieldId) {
+    //   var location = $(fieldId).val();
+    //   var latitudePattern = /^-?([1-8]?[0-9]\.{1}\d{1,6}|90\.0{1})$/; // Matches valid latitude values
+    //   var submitButton = $("#btn1");
+
+    //   if (location.trim() === "") {
+    //     $("#longspan").html("Enter the Longitude").css("color", "red");
+    //     submitButton.prop("disabled", true);
+    //     return false;
+    //   } else if (!latitudePattern.test(location)) {
+    //     $("#longspan").html("Longitude field required a valid longitude value").css("color", "red");
+    //     submitButton.prop("disabled", true);
+    //     return false;
+    //   } else {
+    //     $("#longspan").html("");
+    //     submitButton.prop("disabled", false);
+    //     return true;
+    //   }
+    // }
+
+    function validatesprice(fieldId) {
+      var price = $(fieldId).val();
+      var numbersOnly = /^\d+(\.\d{1,2})?$/; // Allows whole numbers or numbers with up to 2 decimal places
+      var submitButton = $("#btn1");
+
+      if (price.trim() === "") {
+        $("#pricespan").html("Enter the Price").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false;
+      } else if (!numbersOnly.test(price)) {
+        $("#pricespan").html("Price field required only numeric characters").css("color", "red");
+        submitButton.prop("disabled", true);
+        return false;
+      } else {
+        $("#pricespan").html("");
+        submitButton.prop("disabled", false);
+        return true;
+      }
+    }
+
+    function checkall() {
+      if (validatefName() && validatesName() && validateEmail() && validatePassword() && validateConfirmPassword() && validatePhoneNumber())
+        return true;
+
+      return false;
+    }
+
+  </script>
+
+  </html>

@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Success</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .tick-img {
+            width: 100px;
+            height: auto;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        p {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{% static "bgimg\sucess.gif" %}" alt="Tick Image" class="tick-img">
+        <h1>Booking Successful</h1>
+        <p>Thank you for booking.</p>
+        <p>You will be redirected in <span id="countdown">5</span> seconds...</p>
+    </div>
+</body>
+<script>
+    // Redirect after 5 seconds
+    setTimeout(function() {
+        window.location.href = "{% url 'index' %}"; // Replace 'your_redirect_url_name' with your actual URL name
+    }, 5000);
+
+    // Countdown timer
+    var seconds = 5;
+    var countdownElement = document.getElementById('countdown');
+
+    function updateCountdown() {
+        seconds--;
+        countdownElement.textContent = seconds;
+        if (seconds <= 0) {
+            clearInterval(timer);
+        }
+    }
+
+    var timer = setInterval(updateCountdown, 1000);
+</script>
+</html>

@@ -1,0 +1,425 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EV Service Booking Form</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    integrity="sha512-7U+MY9R5aP42NgpRlzk+X4/DqZRF5lCzViPyEkD2SM5avw0QJvCIMZ45O2q7NJgZPHWA5PPZxvNnsM1U/lMRwQ=="
+    crossorigin="anonymous" />
+
+  <!-- Your other stylesheet links and scripts go here -->
+  <style>
+    body {
+      background: url("your_background_image.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      padding-top: 50px;
+    }
+
+    /* 64ac15 */
+    *,
+    *:before,
+    *:after {
+      box-sizing: border-box;
+    }
+
+    body {
+      padding: 1em;
+      font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 15px;
+      color: #b9b9b9;
+      background-color: #e3e3e3;
+    }
+
+    h4 {
+      color: #f0a500;
+    }
+
+    input,
+    input[type="radio"]+label,
+    input[type="checkbox"]+label:before,
+    select option,
+    select {
+      width: 100%;
+      padding: 1em;
+      line-height: 1.4;
+      background-color: #f9f9f9;
+      border: 1px solid #e5e5e5;
+      border-radius: 3px;
+      -webkit-transition: 0.35s ease-in-out;
+      -moz-transition: 0.35s ease-in-out;
+      -o-transition: 0.35s ease-in-out;
+      transition: 0.35s ease-in-out;
+      transition: all 0.35s ease-in-out;
+    }
+
+    input:focus {
+      outline: 0;
+      border-color: #bd8200;
+    }
+
+    input:focus+.input-icon i {
+      color: #f0a500;
+    }
+
+    input:focus+.input-icon:after {
+      border-right-color: #f0a500;
+    }
+
+    input[type="radio"] {
+      display: none;
+    }
+
+    input[type="radio"]+label,
+    select {
+      display: inline-block;
+      width: 50%;
+      text-align: center;
+      float: left;
+      border-radius: 0;
+    }
+
+    input[type="radio"]+label:first-of-type {
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+    }
+
+    input[type="radio"]+label:last-of-type {
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+
+    input[type="radio"]+label i {
+      padding-right: 0.4em;
+    }
+
+    input[type="radio"]:checked+label,
+    input:checked+label:before,
+    select:focus,
+    select:active {
+      background-color: #f0a500;
+      color: #fff;
+      border-color: #bd8200;
+    }
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    input[type="checkbox"]+label {
+      position: relative;
+      display: block;
+      padding-left: 1.6em;
+    }
+
+    input[type="checkbox"]+label:before {
+      position: absolute;
+      top: 0.2em;
+      left: 0;
+      display: block;
+      width: 1em;
+      height: 1em;
+      padding: 0;
+      content: "";
+    }
+
+    input[type="checkbox"]+label:after {
+      position: absolute;
+      top: 0.45em;
+      left: 0.2em;
+      font-size: 0.8em;
+      color: #fff;
+      opacity: 0;
+      font-family: FontAwesome;
+      content: "\f00c";
+    }
+
+    input:checked+label:after {
+      opacity: 1;
+    }
+
+    select {
+      height: 3.4em;
+      line-height: 2;
+    }
+
+    select:first-of-type {
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+    }
+
+    select:last-of-type {
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+
+    select:focus,
+    select:active {
+      outline: 0;
+    }
+
+    select option {
+      background-color: #f0a500;
+      color: #fff;
+    }
+
+    .input-group {
+      margin-bottom: 1em;
+      zoom: 1;
+    }
+
+    .input-group:before,
+    .input-group:after {
+      content: "";
+      display: table;
+    }
+
+    .input-group:after {
+      clear: both;
+    }
+
+    .input-group-icon {
+      position: relative;
+    }
+
+    .input-group-icon input {
+      padding-left: 4.4em;
+    }
+
+    .input-group-icon .input-icon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3.4em;
+      height: 3.4em;
+      line-height: 3.4em;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .input-group-icon .input-icon:after {
+      position: absolute;
+      top: 0.6em;
+      bottom: 0.6em;
+      left: 3.4em;
+      display: block;
+      border-right: 1px solid #e5e5e5;
+      content: "";
+      -webkit-transition: 0.35s ease-in-out;
+      -moz-transition: 0.35s ease-in-out;
+      -o-transition: 0.35s ease-in-out;
+      transition: 0.35s ease-in-out;
+      transition: all 0.35s ease-in-out;
+    }
+
+    .input-group-icon .input-icon i {
+      -webkit-transition: 0.35s ease-in-out;
+      -moz-transition: 0.35s ease-in-out;
+      -o-transition: 0.35s ease-in-out;
+      transition: 0.35s ease-in-out;
+      transition: all 0.35s ease-in-out;
+    }
+
+    .container {
+      max-width: 58em;
+      padding: 1em 3em 2em 3em;
+      margin: 0em auto;
+      background-color: #fff;
+      border-radius: 4.2px;
+      box-shadow: 0px 3px 10px -2px rgba(0, 0, 0, 0.2);
+    }
+
+    .row {
+      zoom: 1;
+    }
+
+    .row:before,
+    .row:after {
+      content: "";
+      display: table;
+    }
+
+    .row:after {
+      clear: both;
+    }
+
+    .col-half {
+      padding-right: 10px;
+      float: left;
+      width: 50%;
+    }
+
+    .col-half:last-of-type {
+      padding-right: 0;
+    }
+
+    .col-third {
+      padding-right: 10px;
+      float: left;
+      width: 33.33333333%;
+    }
+
+    .col-third:last-of-type {
+      padding-right: 0;
+    }
+
+    button {
+      background-color: #f0a500;
+      color: #fff;
+      text-align: center;
+      margin-left: 30%;
+      padding: 1em 2em;
+      padding: 15px;
+      margin-top: 25px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.35s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #bd8200;
+    }
+
+    @media only screen and (max-width: 540px) {
+      .col-half {
+        width: 100%;
+        padding-right: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <form method="post" enctype="multipart/form-data" id="serviceForm">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <h4>Book Your Service</h4>
+          <div class="input-group input-group-icon">
+            <input type="text" placeholder="Full Name" name="name">
+          </div>
+          <div class="input-group input-group-icon">
+            <input type="number" placeholder="Phone" name="phone">
+          </div>
+          <div class="input-group input-group-icon">
+            <input type="text" placeholder="Car Company" name="company">
+          </div>
+          <div class="input-group input-group-icon">
+            <input type="text" placeholder="Car Model" name="model">
+          </div>
+          <div class="input-group input-group-icon">
+            <input type="text" placeholder="Odometer(Km's)" name="km">
+          </div>
+          <div class="input-group input-group-icon">
+            <input type="date" placeholder="" name="date">
+          </div>
+          <select id="carList" name="type" required onchange="showServiceContainer(this.value)">
+            <option value="" selected disabled>Select service type:</option>
+            <option value="Free Service">Free Service</option>
+            <option value="Paid Service">Paid Service</option>
+            <option value="Running Service">Running Service</option>
+            <!-- Add more service types as needed -->
+          </select>
+        </div>
+
+        <!-- Paid Service Container -->
+        <div class="col-md-6 service-container" id="paidServiceContainer">
+          <h5 style="color: black;">Paid Service Options:</h5>
+          <div class="input-group input-group-icon">
+            <input type="checkbox" id="oilChange1" name="services" value="Oil Change">
+            <label for="oilChange1" style="color: black;">Oil Change</label>
+            <input type="checkbox" id="oilChange2" name="services" value="Tire Rotation">
+            <label for="oilChange2" style="color: black;">Tire Rotation</label>
+            <input type="checkbox" id="oilChange3" name="services" value="Brake Inspection">
+            <label for="oilChange3" style="color: black;">Brake Inspection</label>
+            <input type="checkbox" id="oilChange4" name="services" value="Battery Check">
+            <label for="oilChange4" style="color: black;">Battery Check</label>
+            <input type="checkbox" id="oilChange5" name="services" value="Fluid Top-Up">
+            <label for="oilChange5" style="color: black;">Fluid Top-Up</label>
+          </div>
+          <!-- Add more checkboxes for paid services as needed -->
+        </div>
+        </div>
+        
+        <div class="row mt-4">
+          <!-- Running Service Container -->
+          <div class="col-md-6 service-container" id="runningServiceContainer">
+            <h5 style="color: black; margin-left: 10px;">Running Service Options:</h5>
+            <div class="input-group input-group-icon">
+              <input type="checkbox" id="tireRotation" name="services" value="Tire Rotation">
+              <label for="tireRotation" style="color: black;">Tire Rotation</label>
+              <input type="checkbox" id="brakeInspection" name="services" value="Brake Inspection">
+              <label for="brakeInspection" style="color: black;">Brake Inspection</label>
+              <input type="checkbox" id="batteryCheck" name="services" value="Battery Check">
+              <label for="batteryCheck" style="color: black;">Battery Check</label>
+              <input type="checkbox" id="fluidTopUp" name="services" value="Fluid Top-Up">
+              <label for="fluidTopUp" style="color: black;">Fluid Top-Up</label>
+              <input type="checkbox" id="alignmentCheck" name="services" value="Alignment Check">
+              <label for="alignmentCheck" style="color: black;">Alignment Check</label>
+            </div>
+            <!-- Add more checkboxes for running services as needed -->
+          </div>
+        </div>
+        <div class="col-md-12">
+          <button type="button" class="btn btn-primary" onclick="showConfirmation()">Book Your Service</button>
+        </div>
+  
+        <!-- Confirmation Popup -->
+        <div class="modal" tabindex="-1" role="dialog" id="confirmationModal">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Are you sure you want to book this service?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-success">Confirm Booking</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    // Hide all service containers on page load
+    document.querySelectorAll('.service-container').forEach(container => container.style.display = 'none');
+
+    function showServiceContainer(serviceType) {
+      // Hide all service containers
+      document.querySelectorAll('.service-container').forEach(container => container.style.display = 'none');
+
+      // Show the selected service container
+      if (serviceType === 'Paid Service') {
+        document.getElementById('paidServiceContainer').style.display = 'block';
+      } else if (serviceType === 'Running Service') {
+        document.getElementById('runningServiceContainer').style.display = 'block';
+      }
+    }
+
+    function showConfirmation() {
+      // Display the confirmation modal
+      $('#confirmationModal').modal('show');
+    }
+
+        
+  </script>
+</body>
+
+</html>

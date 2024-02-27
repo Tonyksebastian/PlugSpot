@@ -1,0 +1,518 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Update</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url("{% static 'bglog.jpg' %}");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.742);
+      /* Add a semi-transparent background color to the container */
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 800px;
+    }
+
+    .form-control {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      /* padding: 10px; */
+      width: 100%;
+      /* margin-bottom: 15px; */
+    }
+
+    .btn-update {
+      background-color: #0b0b0b;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .btn-update:hover {
+      /* transition: background-color 0.3s; */
+      transform: scale(1.1);
+      background-color: #19c44f;
+      color: black;
+    }
+
+    /* Arrange fields in two columns */
+    .form-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    /* Adjust field size for two columns */
+    .form-group .form-control {
+      width: calc(50% - 10px);
+      /* Adjust the width as needed */
+    }
+
+    /* Media query for responsiveness */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+
+      .form-group .form-control {
+        width: 100%;
+      }
+    }
+
+    .navbar .btn {
+      color: aliceblue;
+      text-decoration: none;
+      position: relative;
+      background-color: transparent;
+    }
+
+    .navbar .btn:before {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: white;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease-in-out;
+    }
+    #logout,#home{
+      text-decoration: none;
+      color: #ffffff;
+      padding-right: 10px;
+    }
+    #home:hover{
+      text-decoration: none;
+      color: #8cc63f;
+      padding-right: 10px;
+    }
+    #logout:hover{
+      text-decoration: none;
+      color: #e63131;
+      padding-right: 10px;
+    }
+
+    .navbar .btn,#logout :hover {
+      color: #8cc63f;
+      /* Green color for text on hover */
+    }
+
+    .navbar .btn:hover:before {
+      background-color: #8cc63f;
+      /* Green color for underline on hover */
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .btn-pro {
+      text-decoration: none;
+      color: aliceblue;
+      background-color: #8cc63f;
+      padding: 5px;
+      width: 70px;
+      text-align: center;
+      border-radius: 5px;
+    }
+
+    .btn-pro:hover {
+      background-color: aliceblue;
+      color: black;
+      text-decoration: none;
+    }
+
+    h2 {
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+      padding: 5px;
+    }
+    span{
+      padding-left: 280px;
+      margin-top: 0%;
+    }
+  </style>
+</head>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+    <a id="home" href="{% url 'index' %}" class="btn m-1">Home</a>
+    {% if user.is_authenticated %}
+    {% if user.role == 'stowner' %}
+    <a id="home" href="{% url 'subscription' %}" class="btn m-1">Subscription</a>
+    <a id="home" href="{% url 'mystation' %}" class="btn m-1">My Charging Stations</a>
+    <a id="home" href="{% url 'myservice_station'%}" class="btn m-1">My Service Stations</a>
+    <a id="home" href="{% url 'allbooking' %}" class="btn m-1">All Bookings</a>
+    {% endif %}
+    {% if user.role == 'vhowner' %}
+    <a href="{% url 'mybookings' %}">My Charging station Bookings</a>
+    <a href="{% url 'mybooking' %}" class="btn m-1">Service Booking Data</a>
+    {% endif %}
+    <a id="logout" href="{% url 'logout' %}" class="btn m-1">Logout</a>
+    <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
+    {% endif %}
+  </nav>
+  <div class="container">
+    <form method="POST" enctype="multipart/form-data">
+      <h2 class="text-center">Profile Update</h2>
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <!-- Left Column -->
+          <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" id="fn" name="first_name" value="{{ user.first_name }}" class="form-control" required>
+          </div>
+          <span id="fnspan"></span>
+
+          <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" id="sn" name="last_name" value="{{ user.last_name }}" class="form-control" required>
+          </div>
+          <span id="snspan"></span>
+
+          <div class="form-group">
+            <label for="phone_no">Phone Number</label>
+            <input type="tel" id="number" name="phone_no" value="{{ user_profile.phone_no }}" class="form-control" required>
+          </div>
+          <span id="numspan"></span>
+
+        </div>
+        <div class="col-md-6">
+          <!-- Right Column -->
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" class="form-control" disabled>
+          </div>
+          <div class="form-group">
+            <label for="addressline1">Address Line 1</label>
+            <input type="text" id="addressline1" name="addressline1" value="{{ user_profile.addressline1 }}" class="form-control" required>
+            
+          </div>
+          <span id="sapnadd1"></span>
+          <!-- <div class="form-group">
+            <label for="addressline2">Address Line 2</label>
+            <input type="text" id="addressline2" name="addressline2" value="{{ user_profile.addressline2 }}" class="form-control">
+          </div>
+          <span id="spanadd2"></span> -->
+
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <!-- Left Column -->
+          <div class="form-group">
+            <label for="city">City</label>
+            <input type="text" id="city" name="city" value="{{ user_profile.city }}" class="form-control" required>            
+          </div>
+          <span id="cityspan"></span>
+          <div class="form-group">
+            <label for="district">District</label>
+            <input type="text" id="district" name="district" value="{{ user_profile.district }}" class="form-control" required>            
+          </div>
+          <span id="distspan"></span>
+        </div>
+        <div class="col-md-6">
+          <!-- Right Column -->
+          <div class="form-group">
+            <label for="state">State</label>
+            <input type="text" id="state" name="state" value="{{ user_profile.state }}" class="form-control" required>            
+          </div>
+          <span id="statespan"></span>
+          <div class="form-group">
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" value="{{ user_profile.country }}" class="form-control" required>            
+          </div>
+          <span id="countryspan"></span>
+          <div class="form-group">
+            <label for="pin_code">Pin Code</label>
+            <input type="text" id="pin_code" name="pin_code" value="{{ user_profile.pin_code }}" class="form-control" required>         
+          </div>
+          <span id="pinspan"></span>
+        </div>
+      </div>
+      <div class="form-group text-center w-100">
+        <button class="btn text-white bg-black btn-update btn-sm" type="submit">Update</button>
+      </div>
+    </form>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+</body>
+<script>
+
+  $(document).ready(function () {
+    $("#fn").keyup(function () {
+      validatefName("#fn");
+    });
+    $("#sn").keyup(function () {
+      validatesName("#sn");
+    });
+    $("#addressline1").keyup(function () {
+      validateAdd1("#addressline1");
+    });
+
+    $("#addressline2").keyup(function () {
+      validateAdd2("#addressline2");
+    });
+
+    $("#city").keyup(function () {
+      validatCity("#city");
+    });
+
+    $("#district").keyup(function () {
+      validatDistrict("#district");
+    });
+    $("#state").keyup(function () {
+      validatState("#state");
+    });
+    $("#country").keyup(function () {
+      validatCountry("#country");
+    });
+    $("#pin_code").keyup(function () {
+      validatPincode("#pin_code");
+    });
+    $("#number").keyup(function () {
+      validatePhoneNumber("#number");
+    });
+
+  });
+
+
+  function validatePhoneNumber(fieldId) {
+    var numberRegex = /^\d+$/; // Regular expression to allow only digits
+    var phoneNumber = $(fieldId).val();
+    var submitButton = $("#btn"); // Adjust the ID of your submit button element
+
+    if (phoneNumber === "") {
+      $("#numspan").html("Enter the Phone number").css("color", "red");
+      submitButton.prop("disabled", true); // Disable the submit button
+      return false;
+    } else if (!numberRegex.test(phoneNumber)) {
+      $("#numspan").html("Invalid phone Number").css("color", "red");
+      submitButton.prop("disabled", true); // Disable the submit button
+      return false;
+    } else if (phoneNumber.length !== 10 || !['7', '8', '9'].includes(phoneNumber.charAt(0))) {
+      $("#numspan").html("Use correct phone Number").css("color", "red");
+      submitButton.prop("disabled", true); // Disable the submit button
+      return false;
+    } else if (/(\d)\1{4,}/.test(phoneNumber)) {
+      $("#numspan").html("Avoid more than 5 consecutive numbers").css("color", "red");
+      disableSubmitButton();
+      return false;
+    } else {
+      $("#numspan").html("");
+      submitButton.prop("disabled", false); // Enable the submit button
+      return true;
+    }
+  }
+
+
+  function validatefName(fieldId) {
+    var name = $(fieldId).val();
+    var lettersWithSpaces = /^[A-Za-z\s]+$/;
+    var submitButton = $("#btn");
+    if (name.trim() === "") {
+      $("#fnspan").html("Enter the First Name").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else if (!lettersWithSpaces.test(name)) {
+      $("#fnspan").html("First Name field required only alphabet characters with spaces").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else {
+      $("#fnspan").html("");
+      submitButton.prop("disabled", false);
+      return true
+    }
+  }
+
+  function validatesName(fieldId) {
+    var name = $(fieldId).val();
+    var lettersWithSpaces = /^[A-Za-z\s]+$/;
+    var submitButton = $("#btn");
+    if (name.trim() === "") {
+      $("#snspan").html("Enter the Second Name").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else if (!lettersWithSpaces.test(name)) {
+      $("#snspan").html("Second Name field required only alphabet characters with spaces").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else {
+      $("#snspan").html("");
+      submitButton.prop("disabled", false);
+      return true
+    }
+  }
+  function validateAdd1(fieldId) {
+    var name = $(fieldId).val();
+    var lettersWithSpaces = /^[A-Za-z\s]+$/;
+    var submitButton = $("#btn");
+    if (name.trim() === "") {
+      $("#sapnadd1").html("Enter Your Address").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else if (!lettersWithSpaces.test(name)) {
+      $("#sapnadd1").html("Address field required only alphabet characters with spaces").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else {
+      $("#sapnadd1").html("");
+      submitButton.prop("disabled", false);
+      return true
+    }
+  }
+  function validateAdd2(fieldId) {
+    var name = $(fieldId).val();
+    var lettersWithSpaces = /^[A-Za-z\s]+$/;
+    var submitButton = $("#btn");
+    if (name.trim() === "") {
+      $("#spanadd2").html("Enter Your Secondary Address").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else if (!lettersWithSpaces.test(name)) {
+      $("#spanadd2").html("Secondary Address field required only alphabet characters with spaces").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else {
+      $("#spanadd2").html("");
+      submitButton.prop("disabled", false);
+      return true
+    }
+  }
+
+  function validatCity(fieldId) {
+    var name = $(fieldId).val();
+    var lettersWithSpaces = /^[A-Za-z\s]+$/;
+    var submitButton = $("#btn");
+    if (name.trim() === "") {
+      $("#cityspan").html("Enter Your City").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else if (!lettersWithSpaces.test(name)) {
+      $("#cityspan").html("City field required only alphabet characters with spaces").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else {
+      $("#cityspan").html("");
+      submitButton.prop("disabled", false);
+      return true
+    }
+  }
+
+  function validatDistrict(fieldId) {
+    var name = $(fieldId).val();
+    var lettersWithSpaces = /^[A-Za-z\s]+$/;
+    var submitButton = $("#btn");
+    if (name.trim() === "") {
+      $("#distspan").html("Enter Your District").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else if (!lettersWithSpaces.test(name)) {
+      $("#distspan").html("District field required only alphabet characters with spaces").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else {
+      $("#distspan").html("");
+      submitButton.prop("disabled", false);
+      return true
+    }
+  }
+
+  function validatState(fieldId) {
+    var name = $(fieldId).val();
+    var lettersWithSpaces = /^[A-Za-z\s]+$/;
+    var submitButton = $("#btn");
+    if (name.trim() === "") {
+      $("#statespan").html("Enter Your State").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else if (!lettersWithSpaces.test(name)) {
+      $("#statespan").html("State field required only alphabet characters with spaces").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else {
+      $("#statespan").html("");
+      submitButton.prop("disabled", false);
+      return true
+    }
+  }
+
+  function validatCountry(fieldId) {
+    var name = $(fieldId).val();
+    var lettersWithSpaces = /^[A-Za-z\s]+$/;
+    var submitButton = $("#btn");
+    if (name.trim() === "") {
+      $("#countryspan").html("Enter Your Country").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else if (!lettersWithSpaces.test(name)) {
+      $("#countryspan").html("Country field required only alphabet characters with spaces").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else {
+      $("#countryspan").html("");
+      submitButton.prop("disabled", false);
+      return true
+    }
+  }
+
+  function validatPincode(fieldId) {
+    var name = $(fieldId).val();
+    var lettersWithSpaces = /^\d{6}$/;
+    var submitButton = $("#btn");
+    if (name.trim() === "") {
+      $("#pinspan").html("Enter Your Pincode").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else if (!lettersWithSpaces.test(name)) {
+      $("#pinspan").html("Pincode field required only numbers").css("color", "red");
+      submitButton.prop("disabled", true);
+      return false
+    } else {
+      $("#pinspan").html("");
+      submitButton.prop("disabled", false);
+      return true
+    }
+  }
+  function checkall() {
+    if (validatefName() && validatesName() && validatPincode() && validateAdd1() && validatCountry() && validatState() && validateAdd2() && validatCity() && validatDistrict() && validatePhoneNumber())
+      return true;
+
+    return false;
+  }
+
+</script>
+
+</html>

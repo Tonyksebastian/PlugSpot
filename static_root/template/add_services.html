@@ -1,0 +1,132 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.3/components/logins/login-7/assets/css/login-7.css">
+</head>
+<style>
+    .navbar .btn {
+      color: aliceblue;
+      text-decoration: none;
+      position: relative;
+      background-color: transparent;
+    }
+
+    .navbar .btn:before {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: white;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .navbar .btn:hover {
+      color: #8cc63f;
+      /* Green color for text on hover */
+    }
+
+    .navbar .btn:hover:before {
+      background-color: #8cc63f;
+      /* Green color for underline on hover */
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    .btn-pro {
+      text-decoration: none;
+      color: aliceblue;
+      background-color: #8cc63f;
+      padding: 5px;
+      width: 70px;
+      text-align: center;
+      border-radius: 5px;
+    }
+
+    .btn-pro:hover {
+      background-color: aliceblue;
+      color: black;
+    }
+</style>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+        <a href="{% url 'index' %}" class="btn m-1">Home</a>
+        <a href="#" class="btn m-1">Booking Data</a>
+        <a href="{% url 'select_station' %}" class="btn m-1">Available Service Stations</a>
+        <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
+      </nav>
+    <section class="bg-light p-3 p-md-4 p-xl-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-9 col-lg-7 col-xl-6 col-xxl-5">
+                    <div class="card border border-light-subtle rounded-4">
+                        <div class="card-body p-3 p-md-4 p-xl-5">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-5">
+                                        <!-- <div class="text-center mb-4">
+                                            <a href="#!">
+                                                <img src="" alt=""
+                                                    width="175" height="57">
+                                            </a>
+                                        </div> -->
+                                        <h4 class="text-center">Add your service details</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <form action="" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="row gy-3 overflow-hidden">
+                                    <div class="col-12">
+                                        <div class="form-floating mb-3">
+                                            <input type="file" class="form-control" name="ser_img" id="ser_img"
+                                                placeholder="" required>
+                                            <label for="" class="form-label">Choose Image</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" name="ser_name" id="ser_name"
+                                                value="" placeholder="Service Name" required>
+                                            <label for="" class="form-label">Service Name</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating mb-3">
+                                            <textarea class="form-control" name="ser_desc" id="serviceDescription"
+                                                placeholder="Enter service description" required></textarea>
+                                            <label for="serviceDescription" class="form-label">Service
+                                                Description</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating mb-3">
+                                            <input type="number" class="form-control" name="ser_price" id="ser_price"
+                                                value="" placeholder="Service Price" required>
+                                            <label for="" class="form-label">Service Price</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="d-grid">
+                                          <button class="btn bsb-btn-xl btn-primary" type="submit">Add service</button>
+                                        </div>
+                                      </div>
+                                </div>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Page Title</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+    }
+
+    .header {
+      background-color: #000000;
+      color: #d08441;
+      padding: 15px 0;
+      text-align: center;
+      font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+        sans-serif;
+    }
+
+    .btn {
+      background-color: #3498db;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+    }
+
+    .navbar .btn {
+      color: aliceblue;
+      text-decoration: none;
+      position: relative;
+      background-color: transparent;
+    }
+
+    .navbar .btn:before {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: white;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .navbar .btn:hover {
+      color: #8cc63f;
+      /* Green color for text on hover */
+    }
+
+    .navbar .btn:hover:before {
+      background-color: #8cc63f;
+      /* Green color for underline on hover */
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    h2 {
+      color: #232335;
+      padding: 3px;
+      font-weight: bold;
+    }
+
+    .service-block {
+      padding: 20px;
+      margin: 10px;
+      background-color: rgb(222, 225, 226);
+      border-radius: 5px;
+      text-align: center;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .service-block:hover {
+      transform: scale(1.1);
+    }
+
+    .btn-pro {
+      text-decoration: none;
+      color: aliceblue;
+      background-color: #8cc63f;
+      padding: 5px;
+      width: 70px;
+      text-align: center;
+      border-radius: 5px;
+    }
+
+    .btn-pro:hover {
+      background-color: aliceblue;
+      color: black;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <p class="fs-3 fw-bold fst-italic">For everything your car needs.</p>
+  </div>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+    <a href="{% url 'index' %}" class="btn m-1">Home</a>
+    {% if user.role == 'stowner' or user.role == 'admin' %}
+    <a href="{% url 'add_services' ser_id %}" class="btn m-1">Add Service</a>
+    {% endif %}
+    <a href="{% url 'select_station' %}" class="btn m-1">Available Service Stations</a>
+    <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
+  </nav>
+  <p class="p-5 fw-bold font-italic ml-5 pl-3">
+    Book your Car Service -- Online Booking
+  </p>
+  <div class="container">
+    <div class="row">
+      {% for i in ser_data %}
+      <div class="col-md-6">
+        <div class="service-block">
+          <img src="{{ i.photo.url }}" width="150px" height="150px" alt="" srcset="">
+          <p class="fw-bold fst-italic">{{i.ser_name}}</p>
+          <p>{{i.description}}</p>
+          <p>{{i.price}}</p>
+          <a href="{% url 'bookservice' %}">
+            <button class="btn btn-sm btn-md">Book Now</button></a>    
+            
+          {% if user.role == 'stowner' %}
+          <button class="book-now-btn btn-sm bg-danger text-white" onclick="deleConfirmation('{{ i.id }}')" style="border-radius: 5px; padding: 8px 16px; border: none; cursor: pointer;">
+            <i class="bi bi-trash"></i> Delete
+        </button>
+        {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  </div>
+
+  <div class="footer text-center m-3">
+    <p>&copy; 2024 Your Car Service. All rights reserved.</p>
+  </div>
+
+  <!-- Include Bootstrap JS and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+  <script>
+    function deleConfirmation(tour_id) {
+      console.log(tour_id)
+
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to Delete this service?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          console.log("if")
+          window.location.href = "{% url 'ser_delete' 0 %}".replace('0', tour_id);
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

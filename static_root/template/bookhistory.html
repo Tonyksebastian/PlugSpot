@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 20px;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            padding: 20px;
+        }
+
+        .card img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .info-main {
+            padding: 10px;
+        }
+
+        .info-main b {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .info-main p {
+            font-size: 16px;
+            color: #777;
+        }
+
+        .text-success {
+            color: #28a745;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .navbar .btn {
+            color: aliceblue;
+            text-decoration: none;
+            position: relative;
+            background-color: transparent;
+        }
+
+        .navbar .btn:before {
+            content: "";
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: white;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .navbar .btn:hover {
+            color: #8cc63f;
+            /* Green color for text on hover */
+        }
+
+        .navbar .btn:hover:before {
+            background-color: #8cc63f;
+            /* Green color for underline on hover */
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .btn-pro {
+            text-decoration: none;
+            color: aliceblue;
+            background-color: #8cc63f;
+            padding: 5px;
+            width: 70px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .btn-pro:hover {
+            background-color: aliceblue;
+            color: black;
+        }
+
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+        <a href="{% url 'index' %}" class="btn m-1">Home</a>
+        <a href="{% url 'booking' %}" class="btn m-1">Available Stations</a>
+        <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
+    </nav>
+
+    <div class="head w-100 text-center text-primary fs-5 p-1">
+        <div class="container-sm mt-1">
+          <h5 class="text-center">Generate Report</h5>
+          <form method="post" action="{% url "booking_receipt" %}" class="mx-auto">
+            {% csrf_token %}
+            <div class="form-group p-1">
+              <label for="start_date" class="fs-6">From Date:</label>
+              <input type="date" name="start_date" class="form-control-sm" id="start_date" required class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="end_date" class="fs-6">To Date:</label>
+              <input type="date" name="end_date" class="form-control-sm" id="end_date" required class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary p-1 btn-sm mt-2">Generate</button>
+            {% comment %} <button type="button" id="close-button" class="btn btn-sm btn-secondary mt-2">Close</button> {% endcomment %}
+          </form>
+        </div>
+    </div>
+    <div class="container">
+        {% if ended_bookings %}
+        {% for booking in ended_bookings %}
+        <div class="card mb-4">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="{{ booking.photo.url }}" alt="photo" height="150px" width="250px" class="img-fluid rounded-start">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title"><b>Station Name:</b> {{ booking.stname }}</h5>
+                        <p class="card-text"><b>Owner:</b> {{ booking.ownername }}</p>
+                        <p class="card-text"><b>My Slot:</b> {{ booking.slotnumber }}</p>
+                        <p class="card-text"><b>Date:</b> {{ booking.date }}</p>
+                        <p class="card-text"><b>Start Time:</b> {{ booking.start_time }}</p>
+                        <p class="card-text"><b>End Time:</b> {{ booking.end_time }}</p>
+                        <p class="card-text"><b>Place:</b> {{ booking.place }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between align-items-center">
+                    <!-- <span class="h5 text-muted"><s>{{ booking.price }}/hr</s></span> -->
+                    <span class="text-success"><i class="fas fa-check-circle me-1"></i> Completed</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="text-center">No ended bookings found.</p>
+        {% endif %}
+    </div>
+</body>
+
+</html>

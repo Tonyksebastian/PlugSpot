@@ -43,21 +43,36 @@
       }
     }
 
-    function validatePassword(fieldId) {
-      var password = $(fieldId).val();
-      var pwd_expression = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])/;
-      if (password === "") {
-        $("#pspan").html("Enter the Password").css("color", "red");
-        return false
-      } else if (!pwd_expression.test(password)) {
-        $("#pspan").html("Use correct Password").css("color", "red");
-        return false
+    $(document).ready(function () {
+      // Disable submit button if pspan is not empty initially
+      if ($("#pspan").html().trim() !== "") {
+        $('#login').prop('disabled', true);
       }
-      else {
-        $("#pspan").html("");
-        return true
+
+      // Function to validate password
+      function validatePassword(fieldId) {
+        var password = $(fieldId).val();
+        var pwd_expression = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])/;
+        if (password === "") {
+          $("#pspan").html("Enter the Password").css("color", "red");
+          $('#login').prop('disabled', true); // Disable the submit button
+          return false;
+        } else if (!pwd_expression.test(password)) {
+          $("#pspan").html("Use correct password or check your login").css("color", "red");
+          $('#login').prop('disabled', true); // Disable the submit button
+          return false;
+        } else {
+          $("#pspan").html("");
+          $('#login').prop('disabled', false); // Enable the submit button
+          return true;
+        }
       }
-    }
+        // Call the validatePassword function when the password input changes
+        $('#pass').on('input', function () {
+        validatePassword('#pass');
+      });
+    });
+
 
     function checkall() {
             if (validateEmail() && validatePassword())

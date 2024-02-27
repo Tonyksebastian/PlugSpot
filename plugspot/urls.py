@@ -9,6 +9,7 @@ urlpatterns = [
     path('bookings/', include('bookings.urls')),
     path('seminar/', include('seminar.urls')),
     path('accounts/', include('allauth.urls')),
+    path('make_service/', include('make_service.urls')),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

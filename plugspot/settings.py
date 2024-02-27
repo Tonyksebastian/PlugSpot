@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'userapp',
     'bookings',
     'seminar',
+    'make_service',
     ]
 
 AUTHENTICATION_BACKENDS = [
@@ -166,3 +167,12 @@ EMAIL_HOST_PASSWORD = 'qhdpwdfkyhbeivqs'
 
 RAZOR_KEY_ID = 'rzp_test_WVqhwSv8NSsEBm'
 RAZOR_KEY_SECRET = 'dloEcjSZKY7GrdnpI2cTqu2q'
+
+
+# settings.py
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'your-google-client-id'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'your-google-client-secret'
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['example.com']  # Replace with your domain
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'http://localhost:8000/complete/google-oauth2/'  # Adjust based on your configuration

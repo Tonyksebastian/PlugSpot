@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Service Packages</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* Add custom CSS styles here */
+        .service-package {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+        }
+        .service-package h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #343a40;
+        }
+        .service-package p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #6c757d;
+        }
+        .service-package .features {
+            margin-bottom: 20px;
+            color: #6c757d;
+        }
+        .service-package .features ul {
+            list-style: none;
+            padding: 0;
+        }
+        .service-package .features ul li {
+            margin-bottom: 5px;
+        }
+        .service-package .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        .service-package .discount-price {
+            font-size: 20px;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+        .service-package .btn-select {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .service-package .btn-select:hover {
+            background-color: #0056b3;
+        }
+
+        .navbar .btn {
+            color: aliceblue;
+            text-decoration: none;
+            position: relative;
+            background-color: transparent;
+          }
+    
+          .navbar .btn:before {
+            content: "";
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: white;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease-in-out;
+          }
+    
+          .navbar .btn:hover {
+            color: #8cc63f;
+            /* Green color for text on hover */
+          }
+    
+          .navbar .btn:hover:before {
+            background-color: #8cc63f;
+            /* Green color for underline on hover */
+            transform: scaleX(1);
+            transform-origin: left;
+          }
+    
+          h2 {
+            color: #232335;
+            padding: 3px;
+            font-weight: bold;
+          }
+    
+          .service-block {
+            padding: 20px;
+            margin: 10px;
+            background-color: rgb(222, 225, 226);
+            border-radius: 5px;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+          }
+    
+          .service-block:hover {
+            transform: scale(1.1);
+          }
+    
+          .btn-pro {
+            text-decoration: none;
+            color: aliceblue;
+            background-color: #8cc63f;
+            padding: 5px;
+            width: 70px;
+            text-align: center;
+            border-radius: 5px;
+          }
+    
+          .btn-pro:hover {
+            background-color: aliceblue;
+            color: black;
+          }
+    </style>
+</head>
+<body>
+    <nav
+    class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+    <a href="{% url 'index' %}" class="btn m-1">Home</a>
+    <a href="{% url 'select_station' %}" class="btn m-1"
+      >Available Service Stations</a>
+    <a href="{% url 'profile' %}" class="btn-pro m-1"
+      >{{ user.first_name }}</a>
+  </nav>
+  {% for i in packages %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="service-package">
+                    <h2>{{i.package_name}}</h2>
+                    <div class="features">
+                        <p>Time Taken during service</p>
+                        <ul>
+                            <li><i class="fas fa-clock"></i> Takes {{i.duration}} Hours</li>
+                        </ul>                        
+                        <p>Included</p>
+                        {% comment %} <ul>
+                            {% for package in packages %}
+                                {% for desc in package.package_desc.split(', ') %}
+                                    <li>{{ desc }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul> {% endcomment %}
+                    </div>
+                    <div class="price">
+                        <del>{{i.orginal_price}}</del>
+                    </div>
+                    <div class="discount-price">
+                       {{i.discount_price}}
+                    </div>
+                    <button class="btn btn-select">ADD TO CART</button>
+                </div>
+            </div>
+            <!-- Add more service packages here -->
+        </div>
+    </div>
+    {% endfor %}
+</body>
+</html>

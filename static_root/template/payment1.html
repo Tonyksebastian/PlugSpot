@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Details</title>
+  <!-- Include Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<style>
+  body {
+    background-image: url("{% static 'bgimg/merc_chargers_050.jpg' %}");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    overflow: hidden;
+
+  }
+
+  .container {
+    padding-top: 50px;
+  }
+
+  .card {
+  width: 50%;
+  margin: 0 auto; 
+  color: aliceblue;
+  background-color: rgba(0, 0, 0, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px; /* Add some padding for better spacing */
+}
+
+.card-header {
+  background-color: #007bff; /* Change the header background color to blue */
+  color: white; /* Change the header text color to white */
+  font-weight: bold;
+}
+
+.card-footer {
+  background-color: #f8f8ff; /* Change the footer background color to light gray */
+  border-radius: 15px;
+}
+
+.card-text {
+  color: #ffffff; /* Change the text color within the card */
+}
+
+.card-title {
+  color: #007bff; /* Change the title color to blue */
+}
+
+.card-text b {
+  color: #007bff; /* Change the color of the total amount */
+  font-size: 24px; /* Increase font size for total amount */
+}
+
+.card-text b::before {
+  content: "₹"; /* Add the rupee symbol before the total amount */
+}
+
+  .btn-primary {
+    background-color: #1b1b1c;
+    border: none;
+    opacity: 100%;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-weight: bold;
+  }
+
+  .btn-primary:hover {
+    background-color: #188a44;
+  }
+</style>
+
+<body>
+  <div class="container">
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="cost" id="cost" value="{{ total_cost }}">
+
+      {% for i in data %}
+      <div class="card">
+        <div class="card-header">
+          Payment Summary
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Order Details</h5>
+          <p class="card-text">Station Name: {{ i.stname }}</p>
+          <p class="card-text">Booking Date: {{ i.date }}</p>
+          <p class="card-text">Start Time: {{ i.start_time }}</p>
+          <p class="card-text">End Time: {{ i.end_time }}</p>
+          <p class="card-text">Slot Number: {{ i.slotnumber }}</p>
+          {% if total_cost %}
+          <p class="card-text"><b>Total Amount: ₹ {{ total_cost }}.00</b></p>
+
+          {% endif %}
+        </div>
+        <div class="card-footer">
+          <a href="{% url 'payment1' booking_id=i.id cost=total_cost %}" id="btnpay" class="btn btn-primary">Make Payment</a>
+        </div>
+      </div>
+      {% endfor %}
+    </form>
+  </div>
+
+  <!-- Include Bootstrap JS and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  var options = {
+
+    // Enter the Key ID generated from the Dashboard
+    key: "{{ razorpay_merchant_key }}",
+
+    // Amount is in currency subunits.
+    // Default currency is INR. Hence,
+    // 50000 refers to 50000 paise
+    amount: "{{ razorpay_amount }}",
+    currency: "{{ currency }}",
+
+    // Your/store name.
+    name: "Dj Razorpay",
+
+    // Pass the `id` obtained in the response of Step 1
+    order_id: "{{ razorpay_order_id }}",
+    callback_url: "{{ callback_url }}",
+  };
+
+  // initialise razorpay with the options.
+  var rzp1 = new Razorpay(options);
+
+  // add event listener to the payment button.
+  document.getElementById("pay-btn").onclick = function (e) {
+    rzp1.open();
+    e.preventDefault();
+  };
+</script>
+
+</html>

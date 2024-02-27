@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Car Service</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .service-form {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: none;
+        }
+
+        .btn-submit {
+            border-radius: 20px;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            margin-top: 20px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #0056b3;
+            cursor: pointer;
+        }
+        .btn {
+        background-color: #3498db;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background-color: #2980b9;
+      }
+
+      .navbar .btn {
+        color: aliceblue;
+        text-decoration: none;
+        position: relative;
+        background-color: transparent;
+      }
+
+      .navbar .btn:before {
+        content: "";
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: white;
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .navbar .btn:hover {
+        color: #8cc63f;
+        /* Green color for text on hover */
+      }
+
+      .navbar .btn:hover:before {
+        background-color: #8cc63f;
+        /* Green color for underline on hover */
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+
+      h2 {
+        color: #232335;
+        padding: 3px;
+        font-weight: bold;
+      }
+
+      .service-block {
+        padding: 20px;
+        margin: 10px;
+        background-color: rgb(222, 225, 226);
+        border-radius: 5px;
+        text-align: center;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .service-block:hover {
+        transform: scale(1.1);
+      }
+
+      .btn-pro {
+        text-decoration: none;
+        color: aliceblue;
+        background-color: #8cc63f;
+        padding: 5px;
+        width: 70px;
+        text-align: center;
+        border-radius: 5px;
+      }
+
+      .btn-pro:hover {
+        background-color: aliceblue;
+        color: black;
+      }
+    </style>
+</head>
+<body>
+    <nav
+    class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+    <a href="{% url 'index' %}" class="btn m-1">Home</a>
+    <a href="{% url 'select_station' %}" class="btn m-1"
+      >Available Service Stations</a>
+    <a href="{% url 'profile' %}" class="btn-pro m-1"
+      >{{ user.first_name }}</a>
+  </nav>
+    <div class="container">
+        <div class="service-form">
+            <h2 class="form-title">Add Service Packages</h2>
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" class="form-control" id="service-name" name="pkg_name" placeholder="Package Name" required>
+                </div>
+                <label for=""></label>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="service-name" name="pkg_duration" placeholder="Duration (in hours)" required>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" id="service-description" name="pkg_services" rows="5" placeholder="Services"></textarea required>
+                </div>
+                <div class="form-group">
+                    <input type="number" class="form-control" id="service-price" name="org_price" placeholder="Orginal Price" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" class="form-control" id="service-price" name="dic_price" placeholder="Discount Price" required>
+                </div>
+                <div class="form-group">
+                    <input type="file" id="service-image" name="pkg_image" accept="image/*" placeholder="Service Image" required>
+                </div>
+                <button type="submit" class="btn btn-submit">Add package</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

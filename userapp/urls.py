@@ -1,5 +1,5 @@
 from userapp import views
-from django.urls import include, path
+from django.urls import path
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from .views import *
@@ -10,6 +10,7 @@ urlpatterns = [
     # path('reg/', views.reg,name='reg'), 
     path('register/', views.register,name='register'),
     path('register_vh/', views.vhowner, name='register_vh'),
+    path('registerWK/', views.registerWK, name='registerWK'),
     path('login/', views.login,name='login'),
     path('admin_login/', views.admin_login,name='admin_login'),
     path('logout/', views.logout,name='logout'),

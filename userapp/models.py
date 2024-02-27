@@ -36,12 +36,14 @@ class UserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     STOWNER = 'stowner'
     VHOWNER = 'vhowner'
+    WORKER = 'worker'
     ADMIN = 'admin'
 
     ROLE_CHOICES = (
         (STOWNER, 'stowner'),
         (VHOWNER, 'vhowner'),
         (ADMIN, 'admin'),
+        (WORKER, 'worker')
     )
     username = None
     USERNAME_FIELD = 'email'

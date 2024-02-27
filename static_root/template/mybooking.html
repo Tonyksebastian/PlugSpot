@@ -1,0 +1,225 @@
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+</head>
+
+<script type="text/javascript" src="https://www.bing.com/api/maps/mapcontrol?key=Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT"></script>
+
+<script>
+  var map;
+  var searchManager;
+  var directionsManager;
+
+  function initMap() {
+      map = new Microsoft.Maps.Map("#myMap", {
+          credentials: "Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT",
+          zoom: 10,
+      });
+
+      // Initialize the directions manager
+      directionsManager = new Microsoft.Maps.Directions.DirectionsManager(map);
+
+      // Retrieve data from Django view and loop through it
+      var locations = [
+          {% for record in stdata %}
+          {
+              latitude: {{ record.latitude }},
+              longitude: {{ record.longitude }},
+              stname: "{{ record.stname }}",
+              place: "{{ record.place }}"
+          },
+          {% endfor %}
+      ];
+
+      // Create markers for each location
+      for (var i = 0; i < locations.length; i++) {
+          var location = locations[i];
+          var marker = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(location.latitude, location.longitude), {
+              title: location.stname,
+              subTitle: location.place
+          });
+
+          // Attach a click event handler to each marker
+          Microsoft.Maps.Events.addHandler(marker, 'click', function (e) {
+              // Calculate directions to the clicked location
+              calculateDirections(e.target.getLocation());
+          });
+
+          map.entities.push(marker);
+      }
+  }
+
+  // Function to calculate directions to a location
+  function calculateDirections(destinationLocation) {
+      var startPoint = new Microsoft.Maps.Directions.Waypoint({ location: map.getCenter() });
+      var endPoint = new Microsoft.Maps.Directions.Waypoint({ location: destinationLocation });
+
+      directionsManager.clearAll();
+      directionsManager.addWaypoint(startPoint);
+      directionsManager.addWaypoint(endPoint);
+
+      directionsManager.calculateDirections();
+  }
+
+  // Handle the "Get Directions" button click
+  document.getElementById('getDirectionsBtn').addEventListener('click', function () {
+      // Replace this with the destination location you want to provide directions to
+      var destinationLocation = new Microsoft.Maps.Location(9.5915891, 76.521997);
+      calculateDirections(destinationLocation);
+  });
+
+  // Call the initMap function once the page is loaded
+  window.onload = initMap;
+</script>
+
+<style>
+  /* Add this CSS to your existing styles */
+  /* Add this CSS to your existing styles */
+  .navbar .btn {
+    color: aliceblue;
+    text-decoration: none;
+    position: relative;
+    background-color: transparent;
+  }
+
+  .navbar .btn:before {
+    content: "";
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .navbar .btn:hover {
+    color: #8cc63f;
+    /* Green color for text on hover */
+  }
+
+  .navbar .btn:hover:before {
+    background-color: #8cc63f;
+    /* Green color for underline on hover */
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  .btn-pro {
+    text-decoration: none;
+    color: aliceblue;
+    background-color: #8cc63f;
+    padding: 5px;
+    width: 70px;
+    text-align: center;
+    border-radius: 5px;
+  }
+
+  .btn-pro:hover {
+    background-color: aliceblue;
+    color: black;
+  }
+
+</style>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+    <a href="{% url 'index' %}" class="btn m-1">Home</a>
+    <a href="{% url 'booking' %}" class="btn m-1">Available Stations</a>
+    <a href="{% url 'check_bookings' %}" class="btn m-1">Ended Bookings</a>
+    <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
+
+  </nav>
+
+  <div class="head w-100 text-center text-primary fs-4 p-4">
+    <b>My Bookings</b>
+  </div>
+
+  {% for i in mybookings %}
+  <div class="card shadow p-4 bg-light.bg-gradient">
+    <div class="row align-items-center">
+      <div class="col-md-3">
+        <a href="#">
+          <img src="{{i.photo.url}}" alt="photo" height="200px" width="250px" />
+        </a>
+      </div>
+      <div class="col-md-6">
+        <div class="info-main">
+          <b><span>{{ i.stname }}</span></b><br />
+          <b><span>Owner : {{ i.ownername }}</span></b>
+          <div class="d-flex my-3">
+            <!-- <span class="star fas fa-star text-warning me-1"></span>
+            <span class="star fas fa-star text-warning me-1"></span>
+            <span class="star fas fa-star text-warning me-1"></span>
+            <span class="star fas fa-star text-warning me-1"></span>
+            <span class="star fas fa-star text-warning"></span>
+            <span class="badge badge-pill badge-gray ms-2">4.7</span> -->
+
+            <span class="small text-success ms-3"><span class="fas fa-shopping-cart me-1">
+                my slot : {{ i.slotnumber }}</span>
+          </div>
+          <b>
+            <p>Date: {{ i.date }}</p>
+          </b>
+          <b>
+            <p>Start Time: {{ i.start_time }}</p>
+          </b>
+          <b>
+            <p>End Time: {{ i.end_time }}</p>
+          </b>
+          <b>
+            <p>Place: {{ i.place }}</p>
+          </b>
+          <b>
+            Contact :
+            <a class="text-decoration-none text-dark" href="tel:{{ contact }}">{{ contact }}</a>
+            </p>
+          </b>
+          <p>{{ i.description }}</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-3">
+        <div class="d-flex align-items-center">
+          <span class="h5 mb-0 text-gray text-through me-2">
+            {{ i.price}}/Unit</span>
+        </div>
+        <!-- info-price-detail // -->
+        <div class="d-grid gap-2 mt-4">
+          {% comment %} <a class="btn btn-tertiary btn-sm btn-success" href="{% url 'update_booking' i.id %}">
+            <i class="bi bi-trash"></i> Update
+          </a> {% endcomment %}
+          <form class="w-100" method="post" action="{% url 'delete_booking' i.id %}" id="delete-form">
+            {% csrf_token %}
+            <button type="button" class="btn btn-tertiary btn-sm btn-danger w-100" onclick="confirmDelete()"><i
+                class="bi bi-trash"></i> Delete</button>
+          </form>
+          <a class="btn btn-tertiary btn-sm btn-primary" href="{% url 'print_as_pdf' stid2=i.id %}">
+            <i class="bi bi-trash"></i> Print Invoice
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+    crossorigin="anonymous"></script>
+</body>
+<script>
+  function confirmDelete() {
+    if (confirm("Are you sure you want to delete this item?")) {
+      document.getElementById('delete-form').submit();
+    }
+  }
+</script>
+
+</html>

@@ -2,6 +2,8 @@ from django.db import models
 from django.dispatch import receiver
 from userapp.models import CustomUser
 from django.db.models.signals import post_save
+from make_service.models import service_station
+
 
 # Create your models here.
 
@@ -87,3 +89,5 @@ class Subscription(models.Model):
 
     def str(self):
         return f"{self.sub_type} Subscription"
+
+

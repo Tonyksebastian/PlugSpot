@@ -1,0 +1,256 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <title>EV Service Stations</title>
+  <script type="text/javascript"
+    src="https://www.bing.com/api/maps/mapcontrol?key=Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT"></script>
+
+  <script>
+    var map;
+    var searchManager;
+
+    function initMap() {
+      map = new Microsoft.Maps.Map("#myMap", {
+        credentials: "Agyr0UQGWTFzP3Fwb3PDJ_ahP24jx9jRgpUWwBD_37B8MXu1oql6WCs6J-vgU1YT",
+        zoom: 10,
+      });
+
+      // Retrieve data from Django view and loop through it
+      var locations = [
+        {% for record in data %}
+    {
+      latitude: {{ record.latitude }},
+      longitude: {{ record.longitude }},
+      stname: "{{ record.stname }}",
+        place: "{{ record.place }}"
+    },
+    {% endfor %}
+          ];
+
+    // Create markers for each location
+    for (var i = 0; i < locations.length; i++) {
+      var location = locations[i];
+      var marker = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(location.latitude, location.longitude), {
+        title: location.stname,
+        subTitle: location.place
+      });
+      map.entities.push(marker);
+    }
+      }
+
+    // Call the initMap function once the page is loaded
+    window.onload = initMap;
+  </script>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url("{% static 'bgimg/restmb_idxmake.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      color: #000000;
+    }
+
+    header {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: rgba(199, 189, 189, 0.9);
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="text"] {
+      width: 70%;
+      padding: 8px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+
+    input[type="button"] {
+      width: 28%;
+      padding: 8px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .service-station {
+      border-bottom: 1px solid #ddd;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .service-station img {
+      max-width: 100px;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    .station-details h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .contact-info {
+      margin-top: 10px;
+    }
+
+    .book-now-btn {
+      background-color: #4caf50;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .book-now-btn:hover {
+      background-color: #45a049;
+    }
+
+    .navbar .btn {
+      color: aliceblue;
+      text-decoration: none;
+      position: relative;
+      background-color: transparent;
+    }
+
+    .navbar .btn:before {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: white;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .navbar .btn:hover {
+      color: #8cc63f;
+      /* Green color for text on hover */
+    }
+
+    .navbar .btn:hover:before {
+      background-color: #8cc63f;
+      /* Green color for underline on hover */
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    h2 {
+      color: #ffffff;
+      padding: 3px;
+      font-weight: bold;
+      border: solid 3px #38373d;
+    }
+
+    .btn-pro {
+      text-decoration: none;
+      color: aliceblue;
+      background-color: #8cc63f;
+      padding: 5px;
+      width: 70px;
+      text-align: center;
+      border-radius: 5px;
+    }
+
+    .btn-pro:hover {
+      background-color: aliceblue;
+      color: black;
+    }
+
+    @media screen and (max-width: 600px) {
+      .container {
+        max-width: 100%;
+        padding: 10px;
+      }
+
+      input[type="text"],
+      input[type="button"] {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-dark justify-content-end px-5">
+    <a href="{% url 'index' %}" class="btn m-1">Home</a>
+    <a href="{% url "mybooking" %}" class="btn m-1">Booking Data</a>
+    <a href="{% url 'booking' %}" class="btn m-1">Available Charging Stations</a>
+    <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
+  </nav>
+
+  <header>
+    <h2>EV Service Stations</h2>
+  </header>
+
+  <div class="container-fluid col-12 d-flex justify-content-center bg-dark p-5">
+    <div class="map" id="myMap" style="width: 90%; height: 500px"></div>
+  </div>
+
+  <div class="container">
+    <input type="text" id="searchInput" placeholder="Search for stations..." />
+    <input type="button" value="Search" onclick="searchStations()" />
+    {% for i in data %}
+    <div class="service-station bg-white rounded-2 m-2">
+      <div class="station-details">
+        <img src="{{i.photo.url}}" alt="Station 1" />
+        <p class="pt-3">{{i.stname}}</p>
+        <p class="contact-info">Location: {{i.place}}</p>
+      </div>
+      <div></div>
+      <div>
+        <p class="contact-info">Contact: {{i.contact}}</p>
+        <p class="contact-info">Working Hours: 7 AM - 6 PM</p>
+        <a href="{% url 'services' i.id %}"><button class="book-now-btn">Book Now</button></a>
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+
+
+  <script>
+    function searchStations() {
+      var input, filter, stations, station, txtValue;
+      input = document.getElementById("searchInput");
+      filter = input.value.toUpperCase();
+      stations = document.getElementsByClassName("service-station");
+
+      for (var i = 0; i < stations.length; i++) {
+        station = stations[i].getElementsByClassName("station-details")[0];
+        txtValue = station.textContent || station.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          stations[i].style.display = "";
+        } else {
+          stations[i].style.display = "none";
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

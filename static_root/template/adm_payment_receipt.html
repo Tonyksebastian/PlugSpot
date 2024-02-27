@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      text-align: center;
+      background-color: #f2f2f2;
+      padding: 10px;
+    }
+
+    .header h2 {
+      margin: 0;
+    }
+
+    .header2 {
+      text-align: center;
+      padding: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .user-id {
+      width: 20%;
+    }
+
+    .payment-id {
+      width: 20%;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>Receipt for payment</h2>
+  </div>
+  <div class="header2">
+    <h3>
+      {% if start_date and end_date %}
+      Period: {{ start_date|date:"Y-m-d" }} to {{ end_date|date:"Y-m-d" }}
+      {% elif start_date %}
+      Date: {{ start_date|date:"Y-m-d" }}
+      {% endif %}
+    </h3>
+  </div>
+  <table>
+    <tr>
+      <th class="user-id">User ID</th>
+      <th>Order Id</th>
+      <th>Amount</th>
+      <th class="payment-id">Payment_id</th>
+    </tr>
+    <tbody>
+      {% for i in payment_history %}
+      <tr>
+        <td class="user-id">{{ i.user_id }}</td>
+        <td>{{ i.order }}</td>
+        <td>{{ i.amount }}</td>
+        <td class="payment-id">{{ i.payment_id }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4">No purchases found in the specified date range.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

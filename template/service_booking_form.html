@@ -1,0 +1,508 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EV Service Booking Form</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    integrity="sha512-7U+MY9R5aP42NgpRlzk+X4/DqZRF5lCzViPyEkD2SM5avw0QJvCIMZ45O2q7NJgZPHWA5PPZxvNnsM1U/lMRwQ=="
+    crossorigin="anonymous" />
+
+  <!-- Your other stylesheet links and scripts go here -->
+  <style>
+
+    /* 64ac15 */
+    *,
+    *:before,
+    *:after {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 15px;
+      color: #b9b9b9;
+      background-color: #e3e3e3;
+    }
+
+    h4 {
+      color: #f0a500;
+    }
+
+    input,
+    input[type="radio"]+label,
+    input[type="checkbox"]+label:before,
+    select option,
+    select {
+      width: 100%;
+      padding: 1em;
+      line-height: 1.4;
+      background-color: #f9f9f9;
+      border: 1px solid #e5e5e5;
+      border-radius: 3px;
+      -webkit-transition: 0.35s ease-in-out;
+      -moz-transition: 0.35s ease-in-out;
+      -o-transition: 0.35s ease-in-out;
+      transition: 0.35s ease-in-out;
+      transition: all 0.35s ease-in-out;
+    }
+
+    input:focus {
+      outline: 0;
+      border-color: #bd8200;
+    }
+
+    input:focus+.input-icon i {
+      color: #f0a500;
+    }
+
+    input:focus+.input-icon:after {
+      border-right-color: #f0a500;
+    }
+
+    input[type="radio"] {
+      display: none;
+    }
+
+    input[type="radio"]+label,
+    select {
+      display: inline-block;
+      width: 50%;
+      text-align: center;
+      float: left;
+      border-radius: 0;
+    }
+
+    input[type="radio"]+label:first-of-type {
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+    }
+
+    input[type="radio"]+label:last-of-type {
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+
+    input[type="radio"]+label i {
+      padding-right: 0.4em;
+    }
+
+    input[type="radio"]:checked+label,
+    input:checked+label:before,
+    select:focus,
+    select:active {
+      background-color: #f0a500;
+      color: #fff;
+      border-color: #bd8200;
+    }
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    input[type="checkbox"]+label {
+      position: relative;
+      display: block;
+      padding-left: 1.6em;
+    }
+
+    input[type="checkbox"]+label:before {
+      position: absolute;
+      top: 0.2em;
+      left: 0;
+      display: block;
+      width: 1em;
+      height: 1em;
+      padding: 0;
+      content: "";
+    }
+
+    input[type="checkbox"]+label:after {
+      position: absolute;
+      top: 0.45em;
+      left: 0.2em;
+      font-size: 0.8em;
+      color: #fff;
+      opacity: 0;
+      font-family: FontAwesome;
+      content: "\f00c";
+    }
+
+    input:checked+label:after {
+      opacity: 1;
+    }
+
+    select {
+      height: 3.4em;
+      line-height: 2;
+    }
+
+    select:first-of-type {
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+    }
+
+    select:last-of-type {
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+
+    select:focus,
+    select:active {
+      outline: 0;
+    }
+
+    select option {
+      background-color: #f0a500;
+      color: #fff;
+    }
+
+    .input-group {
+      margin-bottom: 1em;
+      zoom: 1;
+    }
+
+    .input-group:before,
+    .input-group:after {
+      content: "";
+      display: table;
+    }
+
+    .input-group:after {
+      clear: both;
+    }
+
+    .input-group-icon {
+      position: relative;
+    }
+
+    .input-group-icon input {
+      padding-left: 4.4em;
+    }
+
+    .input-group-icon .input-icon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3.4em;
+      height: 3.4em;
+      line-height: 3.4em;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .input-group-icon .input-icon:after {
+      position: absolute;
+      top: 0.6em;
+      bottom: 0.6em;
+      left: 3.4em;
+      display: block;
+      border-right: 1px solid #e5e5e5;
+      content: "";
+      -webkit-transition: 0.35s ease-in-out;
+      -moz-transition: 0.35s ease-in-out;
+      -o-transition: 0.35s ease-in-out;
+      transition: 0.35s ease-in-out;
+      transition: all 0.35s ease-in-out;
+    }
+
+    .input-group-icon .input-icon i {
+      -webkit-transition: 0.35s ease-in-out;
+      -moz-transition: 0.35s ease-in-out;
+      -o-transition: 0.35s ease-in-out;
+      transition: 0.35s ease-in-out;
+      transition: all 0.35s ease-in-out;
+    }
+
+    .container {
+      max-width: 58em;
+      padding: 1em 3em 2em 3em;
+      margin: 0em auto;
+      background-color: #fff;
+      border-radius: 4.2px;
+      box-shadow: 0px 3px 10px -2px rgba(0, 0, 0, 0.2);
+    }
+
+    .row {
+      zoom: 1;
+    }
+
+    .row:before,
+    .row:after {
+      content: "";
+      display: table;
+    }
+
+    .row:after {
+      clear: both;
+    }
+
+    .col-half {
+      padding-right: 10px;
+      float: left;
+      width: 50%;
+    }
+
+    .col-half:last-of-type {
+      padding-right: 0;
+    }
+
+    .col-third {
+      padding-right: 10px;
+      float: left;
+      width: 33.33333333%;
+    }
+
+    .col-third:last-of-type {
+      padding-right: 0;
+    }
+
+    button {
+      background-color: #f0a500;
+      color: #fff;
+      text-align: center;
+      margin-left: 30%;
+      padding: 1em 2em;
+      padding: 15px;
+      margin-top: 25px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.35s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #bd8200;
+    }
+
+    @media only screen and (max-width: 540px) {
+      .col-half {
+        width: 100%;
+        padding-right: 0;
+      }
+    }
+
+    @keyframes blink {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* Apply the blinking animation to the label */
+    .blink {
+      animation: blink 1s infinite;
+    }
+
+    .navbar {
+      margin: 0%;
+      padding: 0%;
+    }
+
+    .navbar .btn {
+      color: aliceblue;
+      text-decoration: none;
+      position: relative;
+      background-color: transparent;
+    }
+
+    .navbar .btn:before {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: white;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .navbar .btn:hover {
+      color: #8cc63f;
+      /* Green color for text on hover */
+    }
+
+    .navbar .btn:hover:before {
+      background-color: #8cc63f;
+      /* Green color for underline on hover */
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    h2 {
+      color: #ffffff;
+      padding: 3px;
+      font-weight: bold;
+      border: solid 3px #38373d;
+    }
+
+    .btn-pro {
+      text-decoration: none;
+      color: aliceblue;
+      background-color: #8cc63f;
+      padding: 5px;
+      width: 70px;
+      text-align: center;
+      border-radius: 5px;
+    }
+
+    .btn-pro:hover {
+      background-color: aliceblue;
+      color: black;
+    }
+
+    .image-container {
+      position: relative;
+    }
+
+    .image-container img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    @media (max-width: 768px) {
+      .image-container {
+        display: none;
+        /* Hide image on smaller screens */
+      }
+    }
+
+    @media (min-width: 768px) {
+      .col-md-6 {
+        padding-right: 15px;
+        padding-left: 15px;
+      }
+    }
+
+    .navbar {
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+    <a href="{% url 'index' %}" class="btn m-1">Home</a>
+    <a href="{% url 'select_station' %}" class="btn m-1">Available Service Stations</a>
+    <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
+  </nav>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <form method="post" enctype="multipart/form-data" id="serviceForm">
+          {% csrf_token %}
+          <h4>Book Your Service</h4>
+          <div class="input-group input-group-icon">
+            <input type="text" placeholder="Vehicle Number" name="vehicle_number" required />
+          </div>       
+          <div class="input-group input-group-icon">
+            <input type="text" placeholder="Car Company" name="company" required />
+          </div>
+          <div class="input-group input-group-icon">
+            <input type="text" placeholder="Car Model" name="model" required />
+          </div>
+          <div class="input-group input-group-icon">
+            <input type="number" placeholder="Odometer(Km's)" name="km" required />
+          </div>
+          <div class="form-floating mb-3">
+            <textarea class="form-control" name="book_desc" id="serviceDescription"
+                placeholder="Enter service description" required></textarea>
+            <label for="serviceDescription" class="form-label">Service
+                Description</label>
+        </div>
+          <div class="input-group input-group-icon">
+            <input type="date" placeholder="" name="date" id="dateField" required />
+          </div>
+          <select name="your_slot" id="time" class="w-100" required>
+            <option value="Forenoon">Forenoon</option>
+            <option value="Afternoon">Afternoon</option>
+          </select>
+          <br><br><br>
+          <label id="available_slots_label" style="color: red;" class="text-center blink" for="your_slot">{{ available_slots }} Slots Left</label>
+         
+          <div class="col-md-12">
+            {% if available_slots >= 1 %}
+            <button type="button" class="btn btn-primary" onclick="showConfirmation()">
+              Book Your Service
+            </button>
+            {% else %}
+          <b><p class="text-danger"> Booking Full <p></b>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <img src="{% static 'bgimg/undraw_repair.svg' %}" alt="Image" class="img-fluid" /><br><br>
+        <b class="text-black">Forenoon : 8.00 Am - 1.00 pm</b><br>
+      <b class="text-black">Afternoon : 2.00 Am - 5.00 pm</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Popup -->
+  <div class="modal" tabindex="-1" role="dialog" id="confirmationModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmation</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to book this service?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-success" id="confirmBookingBtn">
+            Confirm Booking
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      // Display the confirmation modal when clicking the "Book Your Service" button
+      $("#serviceForm button").click(function (e) {
+        e.preventDefault();
+        $("#confirmationModal").modal("show");
+      });
+
+      // Handle the form submission when confirming the booking
+      $("#confirmBookingBtn").click(function () {
+        $("#serviceForm").submit();
+      });
+
+      // Get the current date
+      var currentDate = new Date().toISOString().split("T")[0];
+
+      // Set the minimum attribute of the date input field to the current date
+      $("#dateField").attr("min", currentDate);
+    });
+  </script>
+
+</body>
+
+</html>

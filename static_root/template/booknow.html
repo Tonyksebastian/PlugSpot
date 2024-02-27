@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Form</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        #booking-form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #3498db;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="date"],
+        input[type="time"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        select {
+            appearance: none;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .btn {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .alert {
+            background-color: #e74c3c;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        /* Additional styles for the form container */
+        .container {
+            padding: 20px;
+        }
+  .navbar .btn {
+    color: aliceblue;
+    text-decoration: none;
+    position: relative;
+    background-color: transparent;
+  }
+
+  .navbar .btn:before {
+    content: "";
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .navbar .btn:hover {
+    color: #8cc63f;
+    /* Green color for text on hover */
+  }
+
+  .navbar .btn:hover:before {
+    background-color: #8cc63f;
+    /* Green color for underline on hover */
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  h2 {
+    color: #8cc63f;
+    padding: 3px;
+    font-weight: bold;
+    border: solid 3px #8cc63f;
+  }
+
+  .btn-pro {
+    text-decoration: none;
+    color: aliceblue;
+    background-color: #8cc63f;
+    padding: 5px;
+    width: 70px;
+    text-align: center;
+    border-radius: 5px;
+  }
+
+  .btn-pro:hover {
+    background-color: aliceblue;
+    color: black;
+  }
+
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+        <a href="{% url 'index' %}" class="btn m-1">Home</a>
+        <a href="{% url 'booking' %}" class="btn m-1">Available Stations</a>
+        <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
+      </nav>
+    <form action="" method="POST" enctype="multipart/form-data" id="booking-form">
+        {% csrf_token %}
+
+        {% if error_message %}
+        <p class="error text-danger">{{ error_message }}</p>
+        {% endif %}
+        <h1>Booking Form</h1>
+        <div class="container">
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" class="form-control form-control-lg" required />
+            </div>
+            <div class="form-group">
+                <label for="start-time">Start Time</label>
+                <input type="time" id="startt-time" name="start_time" class="form-control form-control-lg" required />
+            </div>
+            <div class="form-group">
+                <label for="end-time">End Time</label>
+                <input type="time" id="endd-time" name="end_time" class="form-control form-control-lg" required />
+            </div>
+            <div class="form-group">
+                <label for="your_slot">Select Slot</label>
+                <select id="your_slot" class="form-control" name="your_slot" required>
+                    <option value="">Select Slot</option>
+                    {% for num in available_slot_numbers %}
+                    <option value="{{num}}"> plug {{num}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="text-center">
+                <button type="submit" id="btn1" class="btn btn-next btn-lg">Next</button>
+            </div>
+        </div>
+    </form>
+</body>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var dateInput = document.getElementById('date');
+    var startTimeInput = document.getElementById('startt-time');
+    var endTimeInput = document.getElementById('endd-time');
+
+    // Get the current date and time
+    var currentDate = new Date();
+    var currentYear = currentDate.getFullYear();
+    var currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed
+    var currentDay = currentDate.getDate().toString().padStart(2, '0');
+    var currentHour = currentDate.getHours().toString().padStart(2, '0');
+    var currentMinute = currentDate.getMinutes().toString().padStart(2, '0');
+
+    // Set the minimum date and time for the date and start time inputs
+    dateInput.setAttribute('min', `${currentYear}-${currentMonth}-${currentDay}`);
+    startTimeInput.setAttribute('min', `${currentHour}:${currentMinute}`);
+
+    // Add an event listener to the date input
+    dateInput.addEventListener('input', function () {
+        // Check if the selected date is today
+        var selectedDate = new Date(dateInput.value);
+        var selectedYear = selectedDate.getFullYear();
+        var selectedMonth = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+        var selectedDay = selectedDate.getDate().toString().padStart(2, '0');
+
+        if (
+            selectedYear === currentYear &&
+            selectedMonth === currentMonth &&
+            selectedDay === currentDay
+        ) {
+            // If the selected date is today, restrict start time to not go below the current time
+            startTimeInput.setAttribute('min', `${currentHour}:${currentMinute}`);
+        } else {
+            // If the selected date is not today, allow any start time
+            startTimeInput.removeAttribute('min');
+        }
+    });
+
+    // Add an event listener to the start time input
+    startTimeInput.addEventListener('input', function () {
+        // Set the minimum value of the end time input to be the same as the start time
+        endTimeInput.setAttribute('min', startTimeInput.value);
+    });
+});
+</script>
+
+</html>

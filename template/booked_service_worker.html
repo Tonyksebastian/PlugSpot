@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* CSS styles for layout and design */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f3f3f3;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* CSS styles for regular display */
+        .print-ignore {
+            display: block;
+            /* For regular display, show the element */
+        }
+
+        /* CSS styles for printing */
+        @media print {
+            .print-ignore {
+                display: none;
+                /* For printing, hide the element */
+            }
+        }
+        .navbar .btn {
+            color: aliceblue;
+            text-decoration: none;
+            position: relative;
+            background-color: transparent;
+          }
+      
+          .navbar .btn:before {
+            content: "";
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: white;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease-in-out;
+          }
+      
+          .navbar .btn:hover {
+            color: #8cc63f;
+            /* Green color for text on hover */
+          }
+      
+          .navbar .btn:hover:before {
+            background-color: #8cc63f;
+            /* Green color for underline on hover */
+            transform: scaleX(1);
+            transform-origin: left;
+          }
+      
+          h2 {
+            color: #232335;
+            padding: 3px;
+            font-weight: bold;
+          }
+      
+          .service-block {
+            padding: 20px;
+            margin: 10px;
+            background-color: rgb(222, 225, 226);
+            border-radius: 5px;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+          }
+      
+          .service-block:hover {
+            transform: scale(1.1);
+          }
+      
+          .btn-pro {
+            text-decoration: none;
+            color: aliceblue;
+            background-color: #8cc63f;
+            padding: 5px;
+            width: 70px;
+            text-align: center;
+            border-radius: 5px;
+          }
+      
+          .btn-pro:hover {
+            background-color: aliceblue;
+            color: black;
+          }
+      
+      
+    </style>
+</head>
+
+<body>
+    <div class="print-ignore">
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-5 justify-content-end px-5">
+        <a href="{% url 'index' %}" class="btn m-1">Home</a>
+        <a href="#" class="btn m-1">Booking Data</a>
+        <a href="{% url 'service_station_list' %}" class="btn m-1">Available Service Stations</a>
+        <a href="{% url 'profile' %}" class="btn-pro ">{{ user.first_name }}</a>
+      </nav>
+    </div>
+    <div class="container">
+        <h1>Service Details</h1>
+        <!-- Display booking details -->
+        <b>
+            <p>Owner name: {{ booking.user.first_name }} {{ booking.user.last_name }}</p>
+        </b>
+        <b>
+            <p>Booking ID: {{ booking.id }}</p>
+        </b>
+        <b>
+            <p>Service Name: {{ booking.package.service.ser_name }}</p>
+        </b>
+        <b>
+            <p>Vehicle No: {{ booking.vehno }}</p>
+        </b>
+        <b>
+            <p>Date: {{ booking.date }}</p>
+        </b>
+        <b>
+            <p style="color: red;">Package Cost: {{ booking.package.discount_price }}0 Rs</p>
+        </b>
+
+
+        <!-- Other details -->
+        <p>Status: {% if booking.status and booking.completed %}
+        <b>Completed</b>
+        {% elif booking.status and not booking.completed %}
+        <b>Attended</b>
+        {% else %}
+        <b>Pending</b>
+        {% endif %}
+        </p>
+        
+        {% if user.role == "worker" %}
+        <a href="{% url 'completed' booking.id %}" class="btn btn-danger">Mark as Completed</a>
+        {% endif %}
+        
+        <!-- Display other booking details as needed -->
+        
+        <!-- Form for adding additional services -->
+        <!-- Form for adding additional services -->
+        {% if user.role == "worker" %}
+        <div class="print-ignore">
+            <form method="post">
+                {% csrf_token %}
+                <label for="additional_service">Additional Service:</label>
+                <input type="text" id="additional_service" name="additional_service">
+                <label for="service_cost">Cost:(in Rs)</label>
+                <input type="text" id="service_cost" name="service_cost">
+                <button type="submit" class="mt-1">Add Service</button>
+            </form>
+            <!-- <a href="tel:+1234567890" class="btn btn-info mt-2">Make a Call</a> -->
+        {% endif %}
+
+        <!-- Additional services table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Other Services</th>
+                    <th>Cost</th>
+                    {% if user.role == "worker" %}
+                    <th class="print-ignore">Delete</th>
+                    {% endif %}
+
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through additional services -->
+                {% for service in booking.additional_services.all %}
+                <tr>
+                    <td>{{ service.name }}</td>
+                    <td>{{ service.cost }}0 Rs</td>
+                    {% if user.role == "worker" %}
+                    <td class="print-ignore">
+                        <a href="{% url 'delete_added_work' service.id %}" class="btn btn-danger">Delete</a>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+        <!-- Total amount -->
+        <b>Total Amount: {{ total_cost }}</p><p>
+        
+        <div class="print-ignore">
+            <!-- Add buttons and functionality as needed -->
+            <a href="#" class="btn btn-primary" onclick="window.print()">Print Invoice</a>
+            {% if user.role == "vhowner" %}
+            <a href="#" class="btn btn-success">Make Payment</a>
+            {% endif %}
+
+        </div>
+    </div>
+
+</body>
+
+</html>

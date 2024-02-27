@@ -39,7 +39,6 @@ def contact(request):
 
 def subscription(request):
     subscriptions = Subscription.objects.all()
-
     # Process the features for each subscription
     for sub in subscriptions:
         sub.features = sub.features.split(',')
@@ -894,3 +893,5 @@ def adm_user_receipt(request):
         # total_price = Decimal(0)
         # for history in booking_history:
         #     total_price += history.total_price
+    
+

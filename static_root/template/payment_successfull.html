@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plugspot Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #007bff; /* Change title color */
+            margin: 0;
+            padding: 0;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 10px; /* Increase border radius */
+            background-color: #f9f9f9; /* Light gray background */
+            margin-top: 20px;
+            padding: 20px; /* Increase padding */
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+            padding: 15px; /* Increase padding */
+            border-radius: 10px 10px 0 0; /* Rounded top corners */
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 24px; /* Increase title size */
+            margin-top: 0;
+        }
+
+        .card-text {
+            font-size: 18px; /* Increase text size */
+            margin: 10px 0; /* Add more margin */
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px; /* Increase margin top */
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 24px; /* Increase padding */
+            font-size: 18px; /* Increase font size */
+            margin: 0 10px;
+            cursor: pointer;
+            text-decoration: none; /* Remove underline */
+            transition: background-color 0.3s ease; /* Add hover effect */
+        }
+
+        .btn:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Plugspot</h1>
+    <div class="card">
+        <div class="card-header">
+        </div>
+        <div class="card-body">
+            <p class="card-title">Thank you for your payment!</p>
+            <p class="card-text">Your transaction has been completed successfully.</p>
+        </div>
+        <div class="btn-container">
+            <a href="{% url 'index' %}" class="btn">Home</a>
+            <a href="{% url 'mybookings' %}" class="btn">My Bookings</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

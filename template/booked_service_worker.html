@@ -89,14 +89,15 @@
                 /* For printing, hide the element */
             }
         }
+
         .navbar .btn {
             color: aliceblue;
             text-decoration: none;
             position: relative;
             background-color: transparent;
-          }
-      
-          .navbar .btn:before {
+        }
+
+        .navbar .btn:before {
             content: "";
             position: absolute;
             bottom: -3px;
@@ -107,40 +108,40 @@
             transform: scaleX(0);
             transform-origin: right;
             transition: transform 0.3s ease-in-out;
-          }
-      
-          .navbar .btn:hover {
+        }
+
+        .navbar .btn:hover {
             color: #8cc63f;
             /* Green color for text on hover */
-          }
-      
-          .navbar .btn:hover:before {
+        }
+
+        .navbar .btn:hover:before {
             background-color: #8cc63f;
             /* Green color for underline on hover */
             transform: scaleX(1);
             transform-origin: left;
-          }
-      
-          h2 {
+        }
+
+        h2 {
             color: #232335;
             padding: 3px;
             font-weight: bold;
-          }
-      
-          .service-block {
+        }
+
+        .service-block {
             padding: 20px;
             margin: 10px;
             background-color: rgb(222, 225, 226);
             border-radius: 5px;
             text-align: center;
             transition: transform 0.3s ease-in-out;
-          }
-      
-          .service-block:hover {
+        }
+
+        .service-block:hover {
             transform: scale(1.1);
-          }
-      
-          .btn-pro {
+        }
+
+        .btn-pro {
             text-decoration: none;
             color: aliceblue;
             background-color: #8cc63f;
@@ -148,25 +149,23 @@
             width: 70px;
             text-align: center;
             border-radius: 5px;
-          }
-      
-          .btn-pro:hover {
+        }
+
+        .btn-pro:hover {
             background-color: aliceblue;
             color: black;
-          }
-      
-      
+        }
     </style>
 </head>
 
 <body>
     <div class="print-ignore">
-    <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-5 justify-content-end px-5">
-        <a href="{% url 'index' %}" class="btn m-1">Home</a>
-        <a href="#" class="btn m-1">Booking Data</a>
-        <a href="{% url 'service_station_list' %}" class="btn m-1">Available Service Stations</a>
-        <a href="{% url 'profile' %}" class="btn-pro ">{{ user.first_name }}</a>
-      </nav>
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-5 justify-content-end px-5">
+            <a href="{% url 'index' %}" class="btn m-1">Home</a>
+            <a href="#" class="btn m-1">Booking Data</a>
+            <a href="{% url 'service_station_list' %}" class="btn m-1">Available Service Stations</a>
+            <a href="{% url 'profile' %}" class="btn-pro ">{{ user.first_name }}</a>
+        </nav>
     </div>
     <div class="container">
         <h1>Service Details</h1>
@@ -192,23 +191,32 @@
 
 
         <!-- Other details -->
-        <p>Status: {% if booking.status and booking.completed %}
-        <b>Completed</b>
-        {% elif booking.status and not booking.completed %}
-        <b>Attended</b>
-        {% else %}
-        <b>Pending</b>
-        {% endif %}
+        <p>Status:
+            {% if booking.status and booking.completed and booking.payment_done %}
+            <b>Payment done</b>
+            {% elif booking.status and booking.completed %}
+            <b>Payment Pending</b>
+            {% elif booking.status and not booking.completed %}
+            <b style="color: blue;">Attended</b>
+            {% else %}
+            <b>Pending</b>
+            {% endif %}
         </p>
-        
+
+        {% if not booking.payment_done %}
+        {% if user.role == "vhowner" %}
+        <a href="{% url 'payment3' total_cost booking.id %}" id="btnpay" class="btn btn-success">Make
+            Payment</a>
+        {% endif %}
         {% if user.role == "worker" %}
         <a href="{% url 'completed' booking.id %}" class="btn btn-danger">Mark as Completed</a>
         {% endif %}
-        
+
         <!-- Display other booking details as needed -->
+
+        <!-- Form for adding additional services -->
+        <!-- Form for adding additional services -->
         
-        <!-- Form for adding additional services -->
-        <!-- Form for adding additional services -->
         {% if user.role == "worker" %}
         <div class="print-ignore">
             <form method="post">
@@ -220,49 +228,76 @@
                 <button type="submit" class="mt-1">Add Service</button>
             </form>
             <!-- <a href="tel:+1234567890" class="btn btn-info mt-2">Make a Call</a> -->
-        {% endif %}
-
-        <!-- Additional services table -->
-        <table>
-            <thead>
-                <tr>
-                    <th>Other Services</th>
-                    <th>Cost</th>
-                    {% if user.role == "worker" %}
-                    <th class="print-ignore">Delete</th>
-                    {% endif %}
-
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Loop through additional services -->
-                {% for service in booking.additional_services.all %}
-                <tr>
-                    <td>{{ service.name }}</td>
-                    <td>{{ service.cost }}0 Rs</td>
-                    {% if user.role == "worker" %}
-                    <td class="print-ignore">
-                        <a href="{% url 'delete_added_work' service.id %}" class="btn btn-danger">Delete</a>
-                    </td>
-                    {% endif %}
-                </tr>
-                {% endfor %}
-
-            </tbody>
-        </table>
-        <!-- Total amount -->
-        <b>Total Amount: {{ total_cost }}</p><p>
-        
-        <div class="print-ignore">
-            <!-- Add buttons and functionality as needed -->
-            <a href="#" class="btn btn-primary" onclick="window.print()">Print Invoice</a>
-            {% if user.role == "vhowner" %}
-            <a href="#" class="btn btn-success">Make Payment</a>
             {% endif %}
 
+            <!-- Additional services table -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Other Services</th>
+                        <th>Cost</th>
+                        {% if user.role == "worker" %}
+                        <th class="print-ignore">Delete</th>
+                        {% endif %}
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loop through additional services -->
+                    {% for service in booking.additional_services.all %}
+                    <tr>
+                        <td>{{ service.name }}</td>
+                        <td>{{ service.cost }}0 Rs</td>
+                        {% if user.role == "worker" %}
+                        <td class="print-ignore">
+                            <a href="{% url 'delete_added_work' service.id %}" class="btn btn-danger">Delete</a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+            {% endif %}
+            <!-- Total amount -->
+            <b>Total Amount: {{ total_cost }}0 Rs</p>
+                <p>
+                <div class="print-ignore">
+                    <!-- Add buttons and functionality as needed -->
+                    <a href="#" class="btn btn-primary" onclick="window.print()">Print Invoice</a>
+                </div>
         </div>
-    </div>
 
 </body>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    var options = {
+
+        // Enter the Key ID generated from the Dashboard
+        key: "{{ razorpay_merchant_key }}",
+
+        // Amount is in currency subunits.
+        // Default currency is INR. Hence,
+        // 50000 refers to 50000 paise
+        amount: "{{ razorpay_amount }}",
+        currency: "{{ currency }}",
+
+        // Your/store name.
+        name: "Dj Razorpay",
+
+        // Pass the `id` obtained in the response of Step 1
+        order_id: "{{ razorpay_order_id }}",
+        callback_url: "{{ callback_url }}",
+    };
+
+    // initialise razorpay with the options.
+    var rzp1 = new Razorpay(options);
+
+    // add event listener to the payment button.
+    document.getElementById("pay-btn").onclick = function (e) {
+        rzp1.open();
+        e.preventDefault();
+    };
+</script>
 
 </html>

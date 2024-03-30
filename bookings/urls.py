@@ -39,6 +39,10 @@ urlpatterns = [
     path('subscription', views.subscription, name='subscription'),
     path('add_subscription', views.add_subscription, name='add_subscription'),
     path('paymenthandler/<int:booking_id>/', views.paymenthandler, name='paymenthandler_booking'),
-    path('paymenthandler/subscription/<int:sub_id>/', views.paymenthandler, name='paymenthandler_subscription')
+    path('paymenthandler/subscription/<int:sub_id>/', views.paymenthandler, name='paymenthandler_subscription'),
+    path('payment3/<str:total_cost>/<int:service_id>/', views.payment1, name='payment3'),
+    path('paymenthandler1/<int:service_id>/', views.paymenthandler, name='paymenthandler_service'),
+
+
     
 ]

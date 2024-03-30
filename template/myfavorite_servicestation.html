@@ -186,7 +186,7 @@
       <div>
         <p class="contact-info">Contact: {{i.station_id.contact}}</p>
         <p class="contact-info">Working Hours: 8 AM - 6 PM</p>
-        <a href="{% url 'toggle_rem_favorite' station_id=i.id %}" class="btn btn-danger">Remove from Favorites</a>
+        <a href="{% url 'toggle_rem_favorite' i.station_id_id %}" class="btn btn-danger">Remove from Favorites</a>
         <a href="{% url 'services' i.id %}"><button class="book-now-btn">View station</button></a>
       </div>
     </div>

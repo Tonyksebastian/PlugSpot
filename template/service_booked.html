@@ -189,7 +189,6 @@ Fix to show in full screen demo
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-dark justify-content-end px-5">
     <a href="{% url 'index' %}" class="btn m-1">Home</a>
-    <a href="#" class="btn m-1">Booking Data</a>
     <a href="{% url 'service_station_list' %}" class="btn m-1">Available Service Stations</a>
     <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
   </nav>
@@ -225,45 +224,59 @@ Fix to show in full screen demo
               <td>{{ booking.package.service.service.contact }}</td>
               <td>{{ booking.vehno }}</td>
               <td>{{ booking.slotnumber }}</td>
-              <td>{{ booking.km_done }}</td>
+              <td>{{ booking.km_done }}0 Km</td>
               <td>{{ booking.date }}</td>
               <td style="color: {% if booking.status %}green{% else %}red{% endif %};">
-              {% if booking.status and booking.completed %}
-              Completed
-              {% elif booking.status and not booking.completed %}
-              Proceeded
-              {% else %}
-              Pending
-              {% endif %}
-            
-              {% if booking.completed %}
+                <p>Status:
+                  {% if booking.status and booking.completed and booking.payment_done %}
+                  <b>Completed and payment done</b>
+                  {% elif booking.status and booking.completed %}
+                  <b>Payment Pending</b>
+                  {% elif booking.status and not booking.completed %}
+                  <b style="color: blue;">Attended</b>
+                  {% else %}
+                  <b>Pending</b>
+                  {% endif %}
+                </p>
+              </td>
+
+              {% if booking.completed and booking.status and booking.payment_done %}
+              <td>
+                <button class="btn btn-sm bg-dark" data-title="Delete" disabled>
+                  <a href="{% url 'detailed_book_data' booking.id %}" style="color: white; text-decoration: none;">
+                    Completed
+                  </a>
+                </button>
+              </td>
+              {% elif booking.completed and booking.status%}
               <td>
                 <button class="btn btn-sm bg-success" data-title="Delete">
-                    <a href="{% url 'detailed_book_data' booking.id %}" style="color: white; text-decoration: none;">
-                        Proceed to payment
-                    </a>
+                  <a href="{% url 'detailed_book_data' booking.id %}" style="color: white; text-decoration: none;">
+                    Proceed to payment
+                  </a>
                 </button>
-            </td>
-            {% else %}
-            <td>
+              </td>             
+              {% else %}
+              <td>
                 <button class="btn btn-sm bg-success" data-title="Delete" disabled>
-                    <a href="{% url 'detailed_book_data' booking.id %}" style="color: white; text-decoration: none;">
-                        Proceed to payment
-                    </a>
+                  <a href="{% url 'detailed_book_data' booking.id %}" style="color: white; text-decoration: none;">
+                    Proceed to payment
+                  </a>
                 </button>
-            </td>
-            {% endif %}
-            
+              </td>
+              {% endif %}
+
               {% if booking.status %}
               <td>
                 <button class="btn btn-sm bg-danger" data-title="Delete" disabled>Delete</button>
               </td>
               {% else %}
               <td>
-              <button class="btn btn-sm bg-danger" data-title="Delete" onclick="deleConfirmation('{{ booking.id }}')" >Delete</button>
+                <button class="btn btn-sm bg-danger" data-title="Delete"
+                  onclick="deleConfirmation('{{ booking.id }}')">Delete</button>
               </td>
-             {% endif %} 
-             </tr>
+              {% endif %}
+            </tr>
             {% endfor %}
           </tbody>
         </table>
@@ -271,32 +284,33 @@ Fix to show in full screen demo
     </div>
   </div>
   <!-- Modal for error message -->
-<div class="modal" id="errorMessageModal" tabindex="-1" role="dialog" aria-labelledby="errorMessageModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal" id="errorMessageModal" tabindex="-1" role="dialog" aria-labelledby="errorMessageModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
       <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="errorMessageModalLabel">Error</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-              </button>
-          </div>
-          <div class="modal-body">
-              <p>{{ error_message }}</p>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          </div>
+        <div class="modal-header">
+          <h5 class="modal-title" id="errorMessageModalLabel">Error</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>{{ error_message }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
       </div>
+    </div>
   </div>
-</div>
 
-<!-- Add the following JavaScript to trigger the modal when an error message is present -->
+  <!-- Add the following JavaScript to trigger the modal when an error message is present -->
 </body>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 <script>
   {% if messages %}
-      $('#errorMessageModal').modal('show');
+  $('#errorMessageModal').modal('show');
   {% endif %}
 </script>
 
@@ -321,5 +335,5 @@ Fix to show in full screen demo
     });
   }
 </script>
-</html>
 
+</html>

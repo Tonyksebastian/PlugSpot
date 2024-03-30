@@ -180,7 +180,12 @@
         <p class="pt-3">{{i.stname}}</p>
         <p class="contact-info">Location: {{i.place}}</p>
       </div>
-      <p class="pt-3">{{i.description}}</p>
+      <!-- <p class="pt-3">{{i.description}}</p> -->
+      <ul class="list-unstyled mb-3">
+        {% for description in station.descriptions_list %}
+        <li>{{ description }}</li>
+        {% endfor %}
+      </ul>
       <div>
         <p class="contact-info">Contact: {{i.contact}}</p>
         <p class="contact-info">Working Hours: 7 AM - 6 PM</p>

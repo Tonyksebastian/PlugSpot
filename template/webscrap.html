@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Web Scraping Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .btn {
+          color: aliceblue;
+          text-decoration: none;
+          position: relative;
+          background-color: transparent;
+        }
+    
+        .navbar .btn:before {
+          content: "";
+          position: absolute;
+          bottom: -3px;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background-color: white;
+          transform: scaleX(0);
+          transform-origin: right;
+          transition: transform 0.3s ease-in-out;
+        }
+    
+        .navbar .btn:hover {
+          color: #8cc63f;
+          /* Green color for text on hover */
+        }
+    
+        .navbar .btn:hover:before {
+          background-color: #8cc63f;
+          /* Green color for underline on hover */
+          transform: scaleX(1);
+          transform-origin: left;
+        }
+    
+        .btn-pro {
+          text-decoration: none;
+          color: aliceblue;
+          background-color: #8cc63f;
+          padding: 5px;
+          width: 70px;
+          text-align: center;
+          border-radius: 5px;
+        }
+    
+        .btn-pro:hover {
+          background-color: aliceblue;
+          color: black;
+        }
+
+
+        h1, h2 {
+            text-align: center;
+            color: #007bff; /* Blue color */
+        }
+
+        h4 {
+            font-size: 0.9rem; /* Adjust the font size as needed */
+            font-weight: bold; /* Optional: Adjust font weight */
+            color: #333; /* Optional: Adjust text color */
+        }
+
+        p {
+            margin: 0 0 10px;
+            line-height: 1.6;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0 0 0 20px;
+            list-style-type: none;
+        }
+
+        ul li {
+            position: relative;
+            padding-left: 15px;
+        }
+
+        ul li:before {
+            content: "\2022";
+            position: absolute;
+            left: 0;
+            color: #007bff; /* Blue color */
+        }
+
+        strong {
+            color: #28a745; /* Green color */
+        }
+    </style>
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
+        <a href="{% url 'index' %}" class="btn m-1">Home</a>
+        <a href="{% url 'profile' %}" class="btn-pro m-1">{{ user.first_name }}</a>
+      </nav>
+
+    <div class="container">
+        <b><i><p style="color: red; font-size: medium;">Guidelines For EV Users</p></i></b>
+
+        {% for tag in formatted_h1 %}
+            <h4>{{ tag }}</h4>
+        {% endfor %}
+
+        {% for tag in formatted_h2 %}
+        <h4>{{ tag }}</h4>
+        {% endfor %}
+
+        {% for tag in formatted_p %}
+            <p>{{ tag }}</p>
+        {% endfor %}
+
+        {% for tag in formatted_li %}
+            <ul>
+                <li>{{ tag }}</li>
+            </ul>
+        {% endfor %}
+
+        <!-- {% for tag in formatted_strong %}
+            <p><strong>{{ tag }}</strong></p>
+        {% endfor %} -->
+    </div>
+</body>
+</html>

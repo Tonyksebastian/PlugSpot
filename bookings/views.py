@@ -5,6 +5,8 @@ import razorpay
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseBadRequest
+
+from make_service.models import service_booking
 from .form import SubscriptionForm
 from django.shortcuts import render, redirect
 from .models import station, booknow, CustomUser,Subscription
@@ -171,9 +173,10 @@ def calculate_cost(request, stid2):
     
 
 
-def payment1(request, booking_id=None, cost=None, sub_id=None):
+def payment1(request, booking_id=None, cost=None, sub_id=None, total_cost =None, service_id= None):
     currency = 'INR'
     amount = None  # Initialize amount
+    print(service_id)
 
     if booking_id and cost:
         # Handle booking payment
@@ -189,6 +192,7 @@ def payment1(request, booking_id=None, cost=None, sub_id=None):
 
         # Order ID of the newly created order
         razorpay_order_id = razorpay_order['id']
+        print('booking_pay')
         callback_url = reverse('paymenthandler_booking', args=[booking_id])  # You can adjust the callback URL as needed
 
         payment = On_payment.objects.create(
@@ -196,7 +200,6 @@ def payment1(request, booking_id=None, cost=None, sub_id=None):
             amount=amount / 100,  # Convert amount back to Decimal
             payment_id='',
             booking=booking,  # Set booking_id based on conditions
-            # date=date,
             order=razorpay_order_id,
             status=True  # Use a boolean value here
         )
@@ -224,6 +227,7 @@ def payment1(request, booking_id=None, cost=None, sub_id=None):
 
         # Order ID of the newly created order
         razorpay_order_id = razorpay_order['id']
+        print('sub_payment')
         callback_url = reverse('paymenthandler_subscription', args=[sub_id])  # You can adjust the callback URL as needed
 
         payment = On_payment.objects.create(
@@ -243,16 +247,56 @@ def payment1(request, booking_id=None, cost=None, sub_id=None):
         }
 
         return render(request, 'payment.html', context=context)
+    
+    elif service_id and total_cost:
+        total_cost=float(total_cost)
+        total_cost=int(total_cost)
+        # Handle booking payment
+        amount = total_cost * 100  # Convert cost to paise
+        sub_id = None  # Set sub_id to None since it's not used for bookings
+        booking_id = None
+        additional_service = service_booking.objects.get(pk=service_id)
+        razorpay_order = razorpay_client.order.create(dict(
+            amount=amount,
+            currency=currency,
+            payment_capture='0'
+        ))
+
+        # Order ID of the newly created order
+        razorpay_order_id = razorpay_order['id']
+        print("service_payment")
+        callback_url = reverse('paymenthandler_service', args=[service_id])  # You can adjust the callback URL as needed
+
+        payment = On_payment.objects.create(
+            user=request.user,
+            amount=amount / 100,  # Convert amount back to Decimal
+            payment_id='',
+            additional_service=additional_service,  # Set booking_id based on conditions
+            order=razorpay_order_id,
+            status=True  # Use a boolean value here
+            
+        )
+        payment.save()
+
+        context = {
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_merchant_key': settings.RAZOR_KEY_ID,
+            'razorpay_amount': amount,
+            'currency': currency,
+            'callback_url': callback_url,
+        }
+
+        return render(request, 'payment.html', context=context)
 
     else:
+    
         # Handle invalid URL or other cases as needed
         return HttpResponse("Invalid URL")
 
-
-
-
 @csrf_exempt
-def paymenthandler(request, booking_id=None, sub_id=None):
+def paymenthandler(request, service_id=None, booking_id=None, sub_id=None):
+    print(booking_id,service_id)
+    
     # Only accept POST requests.
     if request.method == "POST":
         # Get the required parameters from the POST request.
@@ -265,12 +309,11 @@ def paymenthandler(request, booking_id=None, sub_id=None):
             'razorpay_signature': signature
         }
 
-        print(razorpay_order_id)
         # Verify the payment signature.
         result = razorpay_client.utility.verify_payment_signature(params_dict)
-
+        print(service_id)
         payment = On_payment.objects.get(order=razorpay_order_id)
-
+        payment.status= True
         # Capture the payment.
         amount = int(payment.amount * 100)  # Convert Decimal to paise
         razorpay_client.payment.capture(payment_id, amount)
@@ -292,11 +335,28 @@ def paymenthandler(request, booking_id=None, sub_id=None):
                 # Handle the case where the booking with the given ID doesn't exist.
                 pass
 
+        if service_id:
+            print("if")
+            try:
+                print("try")
+                # Update the Reservation status to True.
+                booking = service_booking.objects.get(id=service_id)
+                booking.payment_done = True  # Update payment_done to True
+                booking.save()
+                # Redirect to the feedback page with ser_id parameter
+                station_id=booking.package.service.service.id
+                return redirect(reverse('feedback_page', kwargs={'ser_id': station_id}))
+                
+            except service_booking.DoesNotExist:
+                # Handle the case where the booking with the given ID doesn't exist.
+                pass
+
         # Render the success page on successful capture of payment.
         return render(request, 'index.html')
 
     else:
         return HttpResponseBadRequest()
+
 
 def send_welcome_email(username, amount, email, booking):
     amount /= 100  # Convert amount back to the original format (from paise to the original currency)
@@ -317,6 +377,36 @@ def send_welcome_email(username, amount, email, booking):
     recipient_list = [email]  # Use the provided email
     
     send_mail(subject, message, from_email, recipient_list)
+
+
+# def send_welcome_email_service(username, amount, email, service_booking):
+#     service_name = service_booking.service_name  # Accessing service_name attribute directly
+#     location = service_booking.location
+#     service_date = service_booking.date
+#     service_time = service_booking.time
+
+#     amount /= 100  # Convert amount back to the original format (from paise to the original currency)
+#     subject = 'Welcome to Plugspot'
+#     message = f"Hello {username},\n\n"
+#     message += f"Welcome to Plugspot, your platform for finding the nearest EV service stations. We're thrilled to have you join us!\n\n"
+    
+#     message += f"You have successfully booked a service at {service_name}, located at {location}.\n\n"
+#     message += f"Your booking details:\n"
+#     message += f"Service Name: {service_name}\n"
+#     message += f"Location: {location}\n"
+#     message += f"Service Date: {service_date}\n"
+#     message += f"Service Time: {service_time}\n"
+#     # Add more relevant booking details as needed
+    
+#     message += f"The total amount paid is {amount}.\n\n"
+#     message += "Please feel free to contact the service station owner for more information.\n\n"
+#     message += "Thank you for choosing Plugspot. We wish you a pleasant experience!\n\n"
+#     message += "Warm regards,\nThe Plugspot Team\n\n"
+    
+#     from_email = 'info.plugspot@gmail.com'  # Replace with your actual email
+#     recipient_list = [email]  # Use the provided email
+    
+#     send_mail(subject, message, from_email, recipient_list)
 
 
 @login_required

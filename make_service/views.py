@@ -15,6 +15,8 @@ from .models import service_station, add_service,service_booking, AdditionalServ
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.db.models import Q
+from bs4 import BeautifulSoup
+import requests
 # Create your views here.
 
 
@@ -36,6 +38,8 @@ def addservicestation(request):
         date = datetime.now()
         description = request.POST.get('desc')
 
+        descriptions = ','.join(description.split('\n'))
+
         post = service_station(
             stname=stname,
             place=place,
@@ -47,13 +51,14 @@ def addservicestation(request):
             maxslot=maxslot,
             date=date,
             available=available,
-            description=description,
+            description=descriptions,
             user_id=userid
         )
-        post2= Favorite(
-            station_id_id=id
-        )
         post.save()
+        post2= Favorite(
+            station_id_id=post.id,
+            user_id=userid
+        )        
         post2.save()
 
         return redirect('subscription')
@@ -122,11 +127,19 @@ def service_home(request):
 def contact(request):
     return render(request, 'contact.html')
 
-
+from django.db.models import Avg
 def select_station(request):
-    stations = service_station.objects.all().order_by("-date")
-    return render(request, "servicestation_list.html", {'data': stations})
-
+    stations = service_station.objects.filter(hidden=False).order_by("-date")
+    for station in stations:
+        if station.description:
+            station.descriptions_list = station.description.split(',')
+        else:
+            station.descriptions_list = []
+        
+        # Calculate the average rating for the station
+        station.average_rating = Feedback.objects.filter(station=station).aggregate(avg_rating=Avg('rating'))['avg_rating']
+        
+    return render(request, "servicestation_list.html", {'stations': stations})
 
 def services(request, ser_id):
     userid= request.user.id
@@ -148,8 +161,9 @@ def service_station_list(request):
     list1=[]
     for i in favorite_id:
         list1.append(i.station_id_id)
+    print(list1)
     
-    return render(request, "servicestation_list.html", {'data': stations,'favorites_id':list1})
+    return render(request, "servicestation_list.html", {'stations': stations,'favorites_id':list1})
 
 def myfavservicest(request):
     user = request.user.id
@@ -252,12 +266,7 @@ def send_service_booking_email(user_email, booking):
 def ser_book_success(request):
     return render(request,"ser_book_success.html")
 
-def worker_dash(request):
-    user = request.user
-    data = CustomUser.objects.filter(id=user.id)
-    total_booking = service_booking.objects.filter(status=True).count()
-    bookings = service_booking.objects.all()
-    return render(request, "worker_dashboard.html", {'bookings': bookings, 'data': data, 'total_booking': total_booking})
+
 
 
 def attend_service_booking(request, booking_id):
@@ -319,13 +328,38 @@ def delete_service(request, service_id):
     return redirect('myservice_station')
 
 def delete_mybookservice(request, service_id):
-    service_to_delete = get_object_or_404(service_booking, id=service_id)
-    service_to_delete.delete()
-    return redirect('mybooking')
 
+    service_to_delete = get_object_or_404(service_booking, id=service_id)
+    
+    # Create an aware datetime for the booking date and time
+    booking_datetime = timezone.make_aware(
+        timezone.datetime.combine(service_to_delete.date, service_to_delete.time)
+    )
+    
+    # Calculate the time difference between now and the booking date and time
+    time_difference = timezone.now() - booking_datetime
+    
+    # Calculate the time difference in seconds
+    time_difference_seconds = time_difference.total_seconds()
+    
+    
+    # Check if the time difference is greater than 24 hours (86400 seconds)
+    if time_difference_seconds > 24 * 3600:
+        # If yes, set del_status to True and save the booking
+        print(time_difference_seconds)
+
+        service_to_delete.del_status = True
+        service_to_delete.save()
+        return redirect('mybooking')
+    
+    else:
+        # If no, render a template with the warning message in a modal
+        return render(request, 'warning_modal.html')
+    
+    
 def mybooking(request):
     user_id = request.user.id
-    booked_data = service_booking.objects.filter(user_id=user_id).order_by('-date')
+    booked_data = service_booking.objects.filter(user_id=user_id,del_status = False).order_by('-date')
     return render(request, "service_booked.html", {'booked_data': booked_data})
 
 
@@ -343,10 +377,7 @@ def service_packages(request, service_id):
 
 
 def add_packages(request, service_id):
-    print(service_id)
     user = request.user.id
-    print(user)
-
     if request.method == 'POST':
         # Extract data from the form
         package_name = request.POST.get('pkg_name')
@@ -432,27 +463,22 @@ def toggle_add_favorite(request, station_id):
     station = get_object_or_404(service_station, id=station_id)
     
     # Check if the station is already in favorites
-    favorite, created = Favorite.objects.get_or_create(user=user, station_id=station)
-    
+    fav = Favorite.objects.get(user=user, station_id_id=station_id)
+    print(fav)
     # If the favorite already exists, set is_favorite to True
-    if not created:
-        favorite.is_favorite = True
-        favorite.save()
+    fav.is_favorite = True
+    fav.save()
     
     return redirect('service_station_list')
 
 
 def toggle_rem_favorite(request, station_id):
+    print(station_id)
     user = request.user
-    station = get_object_or_404(service_station, id=station_id)
-    print(station)
-    # Check if the station is in favorites for the current user
-    favorite = service_station.objects.filter(user=user, id=station).first()
-
-    if favorite:
-        # If the favorite exists, remove it
-        favorite.is_favorite = False
-
+    fav=Favorite.objects.get(user_id=user.id,station_id_id=station_id)
+    if fav.is_favorite:
+        fav.is_favorite = False
+    fav.save()
     return redirect('service_station_list')
 
 def detailed_book_data(request, booking_id):
@@ -463,15 +489,17 @@ def detailed_book_data(request, booking_id):
     
     # Calculate the total cost of additional services
     additional_services_cost = 0
+    additional_services = AdditionalService.objects.filter(booking_id=booking_id)
+    for service in additional_services:
+        additional_services_cost += service.cost
+
     # Calculate the total cost (package cost + additional services cost)
     total_cost = pkg_cost + additional_services_cost
 
     if request.method == 'POST':
-
         # Process form data to add additional services to the booking
         additional_service_name = request.POST.get('additional_service')
         service_cost = request.POST.get('service_cost')
-        print(service_cost,additional_service_name)
 
         # Check if service_cost is not None and not an empty string
         if service_cost and service_cost.strip():
@@ -481,24 +509,17 @@ def detailed_book_data(request, booking_id):
                 cost=float(service_cost),
                 booking=booking
             )
-            
-            # Calculate the new total amount for the booking
-            
-            additional_service.total_cost += float(service_cost)
-            total_cost = additional_service.total_cost
+
+            # Update the total cost for the booking
+            total_cost += float(service_cost)
+            additional_service.total_cost = total_cost
             additional_service.save()
-            var=AdditionalService.objects.filter(booking_id=booking_id)
-            for i in var:
-                additional_services_cost+=i.cost
-            total_cost = pkg_cost + additional_services_cost
-    # Update the total cost variable to reflect the change
-            
-            return render(request, 'booked_service_worker.html', {'booking': booking, 'total_cost': total_cost})
-        # Redirect back to the booking details page to avoid form resubmission
-        
+
+            # Redirect back to the booking details page to avoid form resubmission
+            return redirect('detailed_book_data', booking_id=booking_id)
 
     # Render the template with booking details and total cost
-    return render(request, 'booked_service_worker.html', {'booking': booking, 'total_cost': total_cost})
+    return render(request, 'booked_service_worker.html', {'booking': booking,'total_cost': total_cost})
 
 def delete_added_work(request, service_id):
     # Retrieve the AdditionalService object to be deleted
@@ -522,8 +543,7 @@ def add_comment(request, ser_id):
 
     if request.method == 'POST':
         message = request.POST.get('messages')
-
-        # Fetch the CustomUser object using the user ID
+        rating = request.POST.get('rating')        # Fetch the CustomUser object using the user ID
         user = CustomUser.objects.get(id=user_id)
 
         # Create the Feedback object
@@ -533,9 +553,10 @@ def add_comment(request, ser_id):
             first_name=user.first_name,
             last_name=user.last_name,
             message=message,
+            rating=rating,  
+            status=True,
             date=datetime.now(),
         )
-
         feedback.save()
 
     # Redirect to the feedback_page with the station_id
@@ -555,3 +576,108 @@ def delete_feedback(request, feedback_id, ser_id):
     return redirect('feedback_page', ser_id=ser_id)
 
 
+# def cart(request):
+#     return render(request,"cart.html")
+
+# def add_to_cart(request):
+#     if request.method == 'POST':
+#         # Assuming you have form data or other means to get package_id and service_id
+#         package_id = request.POST.get('package_id')
+#         service_id = request.POST.get('service_id')
+        
+#         # Get the current user
+#         user = request.user
+        
+#         # Create a new cart instance
+#         new_cart = cart.objects.create(
+#             package_id=package_id,
+#             service_id=service_id,
+#             user=user,
+#             status=False,  # Assuming you want to set status to False by default
+#             completed=False,  # Similarly for completed
+#             payment_done=False  # Similarly for payment_done
+#         )
+        
+#         # Save the new cart instance
+#         new_cart.save()
+        
+#         return render(request, "cart.html")
+    
+
+
+from bs4 import BeautifulSoup
+import requests
+
+def car_guide_view(request):
+    # URL of the website you want to scrape
+    url = "https://www.tatacapital.com/blog/loan-for-vehicle/charging-safety-guidelines-for-electric-vehicles/"
+    
+    # Send a GET request to the URL
+    response = requests.get(url)
+    
+    # Parse the HTML content of the page
+    soup = BeautifulSoup(response.content, 'html.parser')
+    
+    # Find all <div> elements with class name 'detail_content bg_white'
+    containers = soup.find_all('div', class_='detail_content bg_white')
+    
+    # Initialize lists to store formatted content for each tag
+    formatted_strong = []
+    formatted_li = []
+    formatted_p = []
+    formatted_h1 = []
+    formatted_h2 = []
+    
+    # Iterate over each container
+    for container in containers:
+        # Extract and format content from <strong> tags
+        strong_tags = container.find_all('strong')
+        for tag in strong_tags:
+            formatted_strong.append(tag.text.strip())
+        
+        # Extract and format content from <li> tags
+        li_tags = container.find_all('li')
+        for tag in li_tags:
+            formatted_li.append(tag.text.strip())
+        
+        # Extract and format content from <p> tags
+        p_tags = container.find_all('p')
+        for tag in p_tags:
+            formatted_p.append(tag.text.strip())
+        
+        # Extract and format content from <h1> tags
+        h1_tags = container.find_all('h1')
+        for tag in h1_tags:
+            formatted_h1.append(tag.text.strip())
+        
+        # Extract and format content from <h2> tags
+        h2_tags = container.find_all('h2')
+        for tag in h2_tags:
+            formatted_h2.append(tag.text.strip())
+    
+    # Pass the formatted information to the template
+    return render(request, 'webscrap.html', {
+        'formatted_strong': formatted_strong,
+        'formatted_li': formatted_li,
+        'formatted_p': formatted_p,
+        'formatted_h1': formatted_h1,
+        'formatted_h2': formatted_h2
+    })
+
+
+def complted_worker_dash(request):
+    user = request.user
+    data = CustomUser.objects.filter(id=user.id)
+    total_booking = service_booking.objects.filter(status=True).count()
+    bookings = service_booking.objects.filter(payment_done=True)
+    return render(request, "completed_worker_dashboard.html", {'bookings': bookings, 'data': data, 'total_booking': total_booking})
+
+def worker_dash(request):
+    user = request.user
+    data = CustomUser.objects.filter(id=user.id)
+    total_booking = service_booking.objects.filter(status=True).count()
+    bookings = service_booking.objects.all()
+    return render(request, "worker_dashboard.html", {'bookings': bookings, 'data': data, 'total_booking': total_booking})
+
+def myservice_station_bookings(request):
+    return render(request,"myservice_station_booking.html")

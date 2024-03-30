@@ -52,18 +52,24 @@ class booknow(models.Model):
             return str(self.name)
 
 
+# models.py in the On_payment model file
+
+
+from make_service.models import service_booking  # Adjust the import path as needed
+
 class On_payment(models.Model):
-     
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user', null=True)
-    order  = models.CharField(null=True, default='123',max_length=30)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)  # Example field for amount as Decimal
+    order = models.CharField(null=True, default='123', max_length=30)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
     booking = models.OneToOneField('booknow', null=True, blank=True, on_delete=models.SET_NULL)
     subscribe = models.ForeignKey('Subscription', null=True, blank=True, on_delete=models.SET_NULL)    
-    payment_id= models.CharField(null=True, default='123',max_length=30)
-    status =models.BooleanField(default=False)
-    # date = models.DateField()
+    additional_service = models.OneToOneField(service_booking, null=True, blank=True, on_delete=models.SET_NULL)
+    payment_id = models.CharField(null=True, default='123', max_length=30)
+    status = models.BooleanField(default=False)
+
     def __str__(self):
         return str(self.user)
+
     
 
 VALIDITY_CHOICES = [

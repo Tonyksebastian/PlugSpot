@@ -147,7 +147,7 @@
                     <div class="features">
                         <p>Time Taken during service</p>
                         <ul>
-                            <li><i class="fas fa-clock"></i> Takes {{i.duration}} Hours</li>
+                            <li><i class="fas fa-clock"></i> Takes {{i.duration}}</li>
                         </ul>
                         <p>Included</p>
 
@@ -161,9 +161,9 @@
                       
                     </div>
                     <div class="price">
-                        <del>{{i.orginal_price}}</del>
+                        <del>{{i.orginal_price}}0 Rs</del>
                     </div>
-                    <div class="discount-price">{{i.discount_price}}</div>
+                    <div class="discount-price">{{i.discount_price}}0 Rs</div>
                     <a href="{% url 'bookservice' i.id %}"><button class="btn btn-select">Book this service</button></a>
                     {% if user.role == 'stowner' %}
                     <a href="{% url 'update_packages' i.id %}"><button class="btn btn-sm bg-success m-1">

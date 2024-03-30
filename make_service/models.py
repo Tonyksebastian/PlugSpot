@@ -68,6 +68,7 @@ class service_booking(models.Model):
     package=models.ForeignKey(add_package,on_delete=models.CASCADE,null=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     status = models.BooleanField(default=False)
+    del_status = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
     payment_done=models.BooleanField(default=False)
 
@@ -88,8 +89,17 @@ class Feedback(models.Model):
     last_name = models.CharField(max_length=100,null=True)
     message = models.TextField()
     date=models.DateTimeField(null=True)
-    likes = models.IntegerField(null=True)
+    rating = models.IntegerField(default=0,null=True)
     status =models.BooleanField(default = False)
 
     def str(self):
         return self.first_name
+    
+class cart(models.Model):
+    
+    package=models.ForeignKey(add_package,on_delete=models.CASCADE,null=True)
+    service=models.ForeignKey(service_station,on_delete=models.CASCADE,null=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
+    status = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False)
+    payment_done=models.BooleanField(default=False)

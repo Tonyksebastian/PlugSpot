@@ -39,8 +39,10 @@ urlpatterns = [
     path('add_comment/<int:ser_id>', views.add_comment, name='add_comment'),
     path('delete_feedback/<int:feedback_id>/<int:ser_id>/', views.delete_feedback, name='delete_feedback'),
     path('ser_book_success', views.ser_book_success, name='ser_book_success'),
+    # path('cart', views.cart, name='cart'),
+    path('car_guide_view', views.car_guide_view, name='car_guide_view'),
+    path('complted_worker_dash', views.complted_worker_dash, name='complted_worker_dash'),
 
-    
 
 ]
 

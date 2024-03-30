@@ -127,6 +127,45 @@
     color: black;
   }
 </style>
+<style>
+  .star {
+    font-size: 20px;
+    cursor: pointer;
+    color: #ccc; /* Unselected star color */
+    margin: 0 5px;
+  }
+  
+  .star.filled {
+    color: gold; /* Selected star color */
+  }
+  </style>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const stars = document.querySelectorAll('.star');
+      const ratingInput = document.getElementById('rating'); // Hidden input to store rating
+
+      stars.forEach(function (star) {
+          star.addEventListener('click', function () {
+              const value = parseInt(star.getAttribute('value')); // Get the value of the clicked star
+              ratingInput.value = value; // Set the value of the hidden input
+              fillStars(value); // Fill the stars up to the selected one
+          });
+      });
+
+      function fillStars(rating) {
+          stars.forEach(function (star) {
+              const starValue = parseInt(star.getAttribute('value'));
+              if (starValue <= rating) {
+                  star.innerHTML = '&#9733;'; // Fill the star
+              } else {
+                  star.innerHTML = '&#9734;'; // Empty the star
+              }
+          });
+      }
+  });
+</script>
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-3 justify-content-end px-5">
@@ -138,6 +177,7 @@
   <div class="container">
     <h1 class="mt-5 mb-4">Service Station Feedback</h1>
     <!-- Comment form -->
+    {% if user.role == 'vhowner' %}
     <div class="add-comment card">
       <div class="card-body">
         <h5 class="card-title">Add Comment</h5>
@@ -147,10 +187,19 @@
             <label for="message">Message:</label>
             <textarea class="form-control" name="messages" id="message" rows="3" required></textarea>
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <div class="rating">
+            <span class="star" value="1">&#9734;</span>
+            <span class="star" value="2">&#9734;</span>
+            <span class="star" value="3">&#9734;</span>
+            <span class="star" value="4">&#9734;</span>
+            <span class="star" value="5">&#9734;</span>
+            <input type="hidden" name="rating" id="rating" value="0"> <!-- Hidden input to store rating -->
+          </div><br>
+          <button type="submit" class="btn btn-primary">Submit Review</button>
         </form>
       </div>
     </div>
+    {% endif %}
     <div class="feedbacks">
       {% for feedback in feedbacks %}
       <div class="feedback card mb-3">
@@ -162,7 +211,7 @@
             </div>
             <div class="message">{{ feedback.message }}</div>
             <div class="date">{{ feedback.date }}</div>
-            <div class="likes">{{ feedback.likes.count }}</div>
+            <div class="date">Rating: {{ feedback.rating }}/5</div>
           </div>
           {% if user_id == feedback.userprofile_id %}
           <a href="{% url 'delete_feedback' feedback_id=feedback.id ser_id=station_id %}" class="btn bg-danger delete-btn">Delete</a>
